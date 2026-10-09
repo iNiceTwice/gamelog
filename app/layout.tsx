@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Toaster } from 'sonner';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -17,6 +18,18 @@ export default function RootLayout({
         <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#19142e] via-[#141124] to-[#120e20]">
           {children}
         </div>
+        <Toaster
+          position="bottom-right"
+          theme="dark"
+          toastOptions={{
+            style: {
+              background: '#272041',
+              border: '1px solid #352C56',
+              color: '#FFFFFF',
+              borderRadius: '1rem',
+            },
+          }}
+        />
       </body>
     </html>
   );
