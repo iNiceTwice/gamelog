@@ -13,9 +13,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="dark">
-      <body className="bg-[#08090d] text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
-        <div className="fixed inset-0 bg-gamer-grid pointer-events-none opacity-40 z-0" />
-        <div className="relative z-10 min-h-screen flex flex-col">
+      <body className="bg-[#141124] text-white antialiased selection:bg-[#6967EB]/30 selection:text-[#00CAFA]">
+        <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#19142e] via-[#141124] to-[#120e20]">
           {children}
         </div>
       </body>

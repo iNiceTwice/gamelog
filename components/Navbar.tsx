@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Gamepad2, Trophy, Clock, Sparkles, Plus, Flame } from 'lucide-react';
+import { Gamepad2, Trophy, Clock, Sparkles, Plus, Star, CheckCircle2 } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: 'history' | 'backlog' | 'recommendations';
@@ -21,56 +21,54 @@ export const Navbar: React.FC<NavbarProps> = ({
   stats,
 }) => {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-cyan-950/40 bg-[#08090d]/85 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-[#2E264E] bg-[#1E1834]/95 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Brand */}
         <div className="flex items-center gap-3">
-          <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-600 p-[1px] neon-glow-cyan">
-            <div className="h-full w-full bg-[#0d0f17] rounded-[11px] flex items-center justify-center">
-              <Gamepad2 className="w-6 h-6 text-cyan-400" />
-            </div>
+          <div className="h-11 w-11 rounded-2xl bg-[#272041] border border-[#3E3465] flex items-center justify-center shadow-md">
+            <Gamepad2 className="w-6 h-6 text-[#00CAFA]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-purple-400 font-mono">
-                gamelog<span className="text-cyan-400">.gg</span>
+              <span className="text-2xl font-black tracking-tight text-white font-sans">
+                gamelog<span className="text-[#00CAFA]">.gg</span>
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/60">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#6967EB]/20 text-[#6967EB] border border-[#6967EB]/30">
                 PRO
               </span>
             </div>
-            <p className="text-xs text-slate-400 hidden sm:block">
-              Bitácora personal de videojuegos & podio
+            <p className="text-xs text-[#9D96B8] hidden sm:block">
+              Biblioteca & Podio Gamer Personal
             </p>
           </div>
         </div>
 
-        {/* Center Navigation Tabs */}
-        <nav className="flex items-center gap-1.5 sm:gap-2 bg-[#0e111a] p-1.5 rounded-xl border border-slate-800/80">
+        {/* Center Navigation Tabs (Pill style like in CS:GO UI) */}
+        <nav className="flex items-center gap-1.5 bg-[#141124] p-1.5 rounded-2xl border border-[#2E264E]">
           <button
             onClick={() => setActiveTab('history')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
               activeTab === 'history'
-                ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_15px_rgba(0,243,255,0.25)]'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                ? 'bg-[#272041] text-white shadow-sm border border-[#3E3465]'
+                : 'text-[#9D96B8] hover:text-white hover:bg-[#1E1834]'
             }`}
           >
-            <Trophy className="w-4 h-4 text-amber-400" />
+            <Trophy className="w-4 h-4 text-[#FFBE0B]" />
             <span>Historial & Podio</span>
           </button>
 
           <button
             onClick={() => setActiveTab('backlog')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
               activeTab === 'backlog'
-                ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border border-purple-500/40 shadow-[0_0_15px_rgba(176,38,255,0.25)]'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                ? 'bg-[#272041] text-white shadow-sm border border-[#3E3465]'
+                : 'text-[#9D96B8] hover:text-white hover:bg-[#1E1834]'
             }`}
           >
-            <Clock className="w-4 h-4 text-purple-400" />
+            <Clock className="w-4 h-4 text-[#6967EB]" />
             <span>Backlog</span>
             {stats.backlogCount > 0 && (
-              <span className="ml-1 text-[11px] px-1.5 py-0.2 rounded-full bg-purple-900/60 text-purple-200 border border-purple-600/40">
+              <span className="ml-1 text-[11px] px-2 py-0.2 rounded-full bg-[#6967EB] text-white font-bold">
                 {stats.backlogCount}
               </span>
             )}
@@ -78,23 +76,35 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <button
             onClick={() => setActiveTab('recommendations')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
               activeTab === 'recommendations'
-                ? 'bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_15px_rgba(0,255,136,0.25)]'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                ? 'bg-[#272041] text-white shadow-sm border border-[#3E3465]'
+                : 'text-[#9D96B8] hover:text-white hover:bg-[#1E1834]'
             }`}
           >
-            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <Sparkles className="w-4 h-4 text-[#00CAFA]" />
             <span className="hidden sm:inline">Recomendaciones</span>
             <span className="sm:hidden">Sugeridos</span>
           </button>
         </nav>
 
-        {/* Action Button */}
+        {/* Right side: Stats Pill + Add Game Button */}
         <div className="flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3 bg-[#141124] px-3.5 py-1.5 rounded-2xl border border-[#2E264E] text-xs">
+            <div className="flex items-center gap-1.5 text-[#9D96B8]">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#00CAFA]" />
+              <span className="font-bold text-white">{stats.totalCompleted}</span> hechos
+            </div>
+            <div className="h-3 w-[1px] bg-[#2E264E]" />
+            <div className="flex items-center gap-1.5 text-[#9D96B8]">
+              <Star className="w-3.5 h-3.5 text-[#FFBE0B] fill-[#FFBE0B]" />
+              <span className="font-bold text-white">{stats.avgRating}</span>
+            </div>
+          </div>
+
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-400 to-purple-600 text-black font-bold text-sm tracking-wide transition-transform hover:scale-[1.03] active:scale-[0.98] shadow-[0_0_20px_rgba(0,243,255,0.4)] cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#6967EB] hover:bg-[#5856d6] text-white font-bold text-sm tracking-wide transition-all shadow-[0_4px_15px_rgba(105,103,235,0.35)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             <span className="hidden md:inline">Agregar Juego</span>

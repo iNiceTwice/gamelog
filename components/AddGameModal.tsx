@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Search, Sparkles, Star, Plus, Check, Loader2 } from 'lucide-react';
+import { X, Search, Sparkles, Star, Check, Loader2 } from 'lucide-react';
 import { NormalizedGame } from '@/lib/igdb/types';
 
 interface AddGameModalProps {
@@ -132,19 +132,19 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl border border-cyan-500/40 bg-[#0d0f18] text-slate-100 shadow-[0_0_40px_rgba(0,243,255,0.2)] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl border border-[#352C56] bg-[#1E1834] text-white shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-[#111422]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2E264E] bg-[#272041]">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-cyan-400" />
-            <h3 className="font-mono font-bold text-lg text-white">
-              Dar de Alta Videojuego en <span className="text-cyan-400">gamelog.gg</span>
+            <Sparkles className="w-5 h-5 text-[#00CAFA]" />
+            <h3 className="font-bold text-lg text-white">
+              Dar de Alta Videojuego en <span className="text-[#00CAFA]">gamelog.gg</span>
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+            className="text-[#9D96B8] hover:text-white p-1 rounded-xl hover:bg-[#1E1834] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -153,53 +153,53 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {errorMsg && (
-            <div className="p-3 rounded-lg bg-red-950/80 border border-red-500/50 text-red-200 text-sm">
+            <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-200 text-sm">
               {errorMsg}
             </div>
           )}
 
           {/* IGDB Live Search Bar */}
           <div>
-            <label className="block text-xs font-mono text-cyan-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-mono text-[#00CAFA] uppercase tracking-wider mb-2">
               1. Buscar en IGDB (Autocompletado de Portada & Géneros)
             </label>
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-[#9D96B8] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Escribe el nombre del juego (ej: Silksong, Elden Ring, Cyberpunk)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#161a28] border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-sm font-sans"
+                className="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-[#141124] border border-[#352C56] text-white placeholder-[#787196] focus:outline-none focus:border-[#6967EB] text-sm"
               />
               {isSearching && (
-                <Loader2 className="w-4 h-4 text-cyan-400 animate-spin absolute right-3.5 top-1/2 -translate-y-1/2" />
+                <Loader2 className="w-4 h-4 text-[#00CAFA] animate-spin absolute right-3.5 top-1/2 -translate-y-1/2" />
               )}
             </div>
 
             {/* Results dropdown */}
             {searchResults.length > 0 && (
-              <div className="mt-2 max-h-56 overflow-y-auto rounded-xl border border-slate-700 bg-[#141824] divide-y divide-slate-800 shadow-2xl">
+              <div className="mt-2 max-h-56 overflow-y-auto rounded-2xl border border-[#352C56] bg-[#272041] divide-y divide-[#352C56] shadow-xl">
                 {searchResults.map((game) => (
                   <button
                     key={game.igdbId}
                     type="button"
                     onClick={() => handleSelectGame(game)}
-                    className="w-full p-2.5 flex items-center gap-3 text-left hover:bg-cyan-950/40 transition-colors cursor-pointer"
+                    className="w-full p-2.5 flex items-center gap-3 text-left hover:bg-[#322954] transition-colors cursor-pointer"
                   >
                     <img
                       src={game.coverUrl || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100'}
                       alt={game.title}
-                      className="w-10 h-14 object-cover rounded border border-slate-700 shrink-0"
+                      className="w-10 h-14 object-cover rounded-lg border border-white/10 shrink-0"
                     />
                     <div className="min-w-0 flex-1">
                       <div className="font-bold text-white text-sm truncate">{game.title}</div>
-                      <div className="text-xs text-slate-400">
+                      <div className="text-xs text-[#9D96B8]">
                         {game.releaseYear ? `Año: ${game.releaseYear}` : ''} {game.genres.slice(0, 2).join(', ')}
                       </div>
                     </div>
-                    <span className="text-xs px-2 py-1 rounded bg-cyan-900/60 text-cyan-300 font-mono">
-                      Seleccionar
+                    <span className="text-xs px-2.5 py-1 rounded-full bg-[#6967EB]/20 text-[#6967EB] border border-[#6967EB]/30 font-medium">
+                      Elegir
                     </span>
                   </button>
                 ))}
@@ -208,14 +208,14 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
           </div>
 
           {/* Game Selected preview / Manual input */}
-          <div className="p-4 rounded-xl border border-slate-800 bg-[#121624]/60 flex items-center gap-4">
+          <div className="p-4 rounded-2xl border border-[#352C56] bg-[#272041] flex items-center gap-4">
             <img
               src={coverUrl || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=200'}
               alt={title || 'Portada'}
-              className="w-16 h-22 object-cover rounded-lg border border-slate-700 shadow-md shrink-0"
+              className="w-16 h-22 object-cover rounded-xl border border-white/10 shadow-sm shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <label className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider mb-1">
+              <label className="block text-[11px] font-mono text-[#9D96B8] uppercase tracking-wider mb-1">
                 Título del Videojuego
               </label>
               <input
@@ -223,13 +223,13 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                 placeholder="Nombre del juego..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3 py-1.5 rounded-lg bg-[#181d2e] border border-slate-700 text-white font-bold text-sm focus:outline-none focus:border-cyan-500"
+                className="w-full px-3 py-1.5 rounded-xl bg-[#141124] border border-[#352C56] text-white font-bold text-sm focus:outline-none focus:border-[#6967EB]"
               />
               <div className="flex flex-wrap gap-1 mt-2">
                 {igdbGenres.map((g, idx) => (
                   <span
                     key={idx}
-                    className="text-[10px] px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-300 border border-cyan-800/60"
+                    className="text-[10px] px-2 py-0.5 rounded-md bg-[#1E1834] text-[#00CAFA] border border-[#352C56]"
                   >
                     {g}
                   </span>
@@ -242,13 +242,13 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
             {/* Status & Year */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-mono text-[#9D96B8] uppercase tracking-wider mb-1.5">
                   Estado
                 </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as any)}
-                  className="w-full px-3 py-2 rounded-xl bg-[#161a28] border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-500 cursor-pointer"
+                  className="w-full px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB] cursor-pointer"
                 >
                   <option value="completed">✅ Terminado</option>
                   <option value="backlog">⏳ Pendiente (Backlog)</option>
@@ -259,21 +259,21 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
 
               {(status === 'completed' || status === 'abandoned') && (
                 <div>
-                  <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-mono text-[#9D96B8] uppercase tracking-wider mb-1.5">
                     Año Jugado
                   </label>
                   <input
                     type="number"
                     value={yearPlayed}
                     onChange={(e) => setYearPlayed(parseInt(e.target.value, 10))}
-                    className="w-full px-3 py-2 rounded-xl bg-[#161a28] border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-500 font-mono"
+                    className="w-full px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB] font-mono"
                   />
                 </div>
               )}
 
               {status === 'backlog' && (
                 <div>
-                  <label className="block text-xs font-mono text-purple-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-mono text-[#6967EB] uppercase tracking-wider mb-1.5">
                     Tipo / Prioridad (Notion)
                   </label>
                   <input
@@ -281,7 +281,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                     value={backlogType}
                     onChange={(e) => setBacklogType(e.target.value)}
                     placeholder="ej: Hard, Casual, Cooperativo..."
-                    className="w-full px-3 py-2 rounded-xl bg-[#161a28] border border-slate-700 text-white text-sm focus:outline-none focus:border-purple-500"
+                    className="w-full px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB]"
                   />
                 </div>
               )}
@@ -289,10 +289,10 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
 
             {/* Rating & Podium (Only for completed / played) */}
             {status !== 'backlog' && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl border border-slate-800 bg-[#121624]/40">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl border border-[#352C56] bg-[#272041]">
                 {/* Rating Stars */}
                 <div>
-                  <label className="block text-xs font-mono text-amber-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-mono text-[#FFBE0B] uppercase tracking-wider mb-1.5">
                     Calificación
                   </label>
                   <div className="flex items-center gap-1.5">
@@ -306,13 +306,13 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                         <Star
                           className={`w-6 h-6 ${
                             starVal <= rating
-                              ? 'fill-amber-400 text-amber-400'
-                              : 'text-slate-700'
+                              ? 'fill-[#FFBE0B] text-[#FFBE0B]'
+                              : 'text-[#44386E]'
                           }`}
                         />
                       </button>
                     ))}
-                    <span className="ml-2 text-xs font-mono font-bold text-amber-300">
+                    <span className="ml-2 text-xs font-mono font-bold text-[#FFBE0B]">
                       {rating} / 5
                     </span>
                   </div>
@@ -320,13 +320,13 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
 
                 {/* Podium */}
                 <div>
-                  <label className="block text-xs font-mono text-amber-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-mono text-[#FFBE0B] uppercase tracking-wider mb-1.5">
                     Podio de Honor Anual
                   </label>
                   <select
                     value={podium || 'none'}
                     onChange={(e) => setPodium(e.target.value === 'none' ? null : (e.target.value as any))}
-                    className="w-full px-3 py-2 rounded-xl bg-[#161a28] border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-400 cursor-pointer"
+                    className="w-full px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#FFBE0B] cursor-pointer"
                   >
                     <option value="none">Sin medalla</option>
                     <option value="gold">🥇 Oro (1° Lugar / GOTY)</option>
@@ -339,7 +339,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
 
             {/* Custom tags (Notion style tags: Souls, FPS, Mundo Abierto) */}
             <div>
-              <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-mono text-[#9D96B8] uppercase tracking-wider mb-1.5">
                 Etiquetas / Géneros Personalizados (Notion)
               </label>
               <div className="flex gap-2 mb-2">
@@ -354,12 +354,12 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                       handleAddCustomTag();
                     }
                   }}
-                  className="flex-1 px-3 py-1.5 rounded-lg bg-[#161a28] border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-500"
+                  className="flex-1 px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB]"
                 />
                 <button
                   type="button"
                   onClick={handleAddCustomTag}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-200 text-xs font-bold hover:bg-slate-700 cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#272041] border border-[#352C56] text-white text-xs font-bold hover:bg-[#322954] cursor-pointer"
                 >
                   Agregar Tag
                 </button>
@@ -368,13 +368,13 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                 {customTags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-md bg-[#191f33] text-cyan-300 border border-cyan-800/50"
+                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-[#272041] text-[#00CAFA] border border-[#352C56]"
                   >
                     {tag}
                     <button
                       type="button"
                       onClick={() => handleRemoveCustomTag(tag)}
-                      className="hover:text-red-400"
+                      className="hover:text-rose-400 font-bold ml-1"
                     >
                       ×
                     </button>
@@ -385,7 +385,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
 
             {/* Review / Notes */}
             <div>
-              <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-mono text-[#9D96B8] uppercase tracking-wider mb-1.5">
                 {status === 'backlog' ? 'Notas / Links (ej: blizzboygames)' : 'Nota / Reseña Personal'}
               </label>
               <textarea
@@ -400,23 +400,23 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                   if (status === 'backlog') setNotes(e.target.value);
                   else setReview(e.target.value);
                 }}
-                className="w-full px-3 py-2 rounded-xl bg-[#161a28] border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-500 resize-none font-sans"
+                className="w-full px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB] resize-none font-sans"
               />
             </div>
 
             {/* Footer Buttons */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#2E264E]">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 text-sm font-medium transition-colors"
+                className="px-4 py-2 rounded-xl text-[#9D96B8] hover:text-white hover:bg-[#272041] text-sm font-medium transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-400 to-purple-600 text-black font-extrabold text-sm tracking-wide shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#6967EB] hover:bg-[#5856d6] text-white font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

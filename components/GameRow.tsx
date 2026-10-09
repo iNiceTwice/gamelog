@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Star, CheckCircle2, Ban, PlayCircle, Trash2, Edit3, MessageSquare } from 'lucide-react';
+import { Star, CheckCircle2, Ban, PlayCircle, Trash2, MessageSquare } from 'lucide-react';
 import { IGameEntry } from '@/models/GameEntry';
 
 interface GameRowProps {
@@ -15,28 +15,28 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
     switch (game.status) {
       case 'completed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-950/60 text-emerald-300 border border-emerald-500/40 shadow-[0_0_10px_rgba(0,255,136,0.15)]">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
+            <CheckCircle2 className="w-3.5 h-3.5" />
             Terminado
           </span>
         );
       case 'abandoned':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-red-950/60 text-red-300 border border-red-500/40 shadow-[0_0_10px_rgba(239,68,68,0.15)]">
-            <Ban className="w-3.5 h-3.5 text-red-400" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+            <Ban className="w-3.5 h-3.5" />
             Abandonado
           </span>
         );
       case 'playing':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-cyan-950/60 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(0,243,255,0.15)]">
-            <PlayCircle className="w-3.5 h-3.5 text-cyan-400" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#00CAFA]/15 text-[#00CAFA] border border-[#00CAFA]/30">
+            <PlayCircle className="w-3.5 h-3.5" />
             Jugando
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#1E1834] text-[#9D96B8] border border-[#352C56]">
             Pendiente
           </span>
         );
@@ -46,21 +46,21 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
   const getPodiumBadge = () => {
     if (game.podium === 'gold') {
       return (
-        <span className="px-2 py-0.5 rounded-full text-xs font-extrabold bg-amber-500/20 text-amber-300 border border-amber-400 shadow-[0_0_10px_rgba(255,190,11,0.4)]">
+        <span className="px-2 py-0.5 rounded-full text-xs font-extrabold bg-[#FFBE0B] text-black shadow-sm">
           🥇 Oro
         </span>
       );
     }
     if (game.podium === 'silver') {
       return (
-        <span className="px-2 py-0.5 rounded-full text-xs font-extrabold bg-slate-400/20 text-slate-200 border border-slate-300 shadow-[0_0_10px_rgba(203,213,225,0.3)]">
+        <span className="px-2 py-0.5 rounded-full text-xs font-extrabold bg-[#CBD5E1] text-black shadow-sm">
           🥈 Plata
         </span>
       );
     }
     if (game.podium === 'bronze') {
       return (
-        <span className="px-2 py-0.5 rounded-full text-xs font-extrabold bg-orange-500/20 text-orange-300 border border-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.3)]">
+        <span className="px-2 py-0.5 rounded-full text-xs font-extrabold bg-[#F97316] text-black shadow-sm">
           🥉 Bronce
         </span>
       );
@@ -71,7 +71,7 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
   const displayTags = game.customTags && game.customTags.length > 0 ? game.customTags : game.igdbGenres;
 
   return (
-    <div className="group relative rounded-xl border border-slate-800/80 bg-[#0e111a]/80 p-4 transition-all duration-200 hover:border-cyan-500/40 hover:bg-[#121624] hover:shadow-[0_0_20px_rgba(0,243,255,0.12)]">
+    <div className="group relative rounded-2xl border border-[#352C56] bg-[#272041] p-4 transition-all duration-200 hover:border-[#6967EB]/50 hover:bg-[#2C244C]">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         {/* Left: Cover & Info */}
         <div className="flex items-center gap-4 min-w-0 flex-1">
@@ -79,7 +79,7 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
             <img
               src={game.coverUrl || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=200'}
               alt={game.title}
-              className="w-14 h-18 object-cover rounded-lg border border-slate-700/80 shadow-md group-hover:border-cyan-500/50 transition-colors"
+              className="w-14 h-18 object-cover rounded-xl border border-white/10 shadow-sm"
             />
             {game.podium && (
               <div className="absolute -top-2 -left-2 scale-90">
@@ -90,11 +90,11 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <h4 className="font-bold text-base text-white group-hover:text-cyan-300 transition-colors truncate">
+              <h4 className="font-bold text-base text-white group-hover:text-[#00CAFA] transition-colors truncate">
                 {game.title}
               </h4>
               {game.yearPlayed && (
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">
+                <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-full bg-[#1E1834] text-[#9D96B8] border border-[#352C56]">
                   {game.yearPlayed}
                 </span>
               )}
@@ -105,7 +105,7 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
               {displayTags?.map((tag, idx) => (
                 <span
                   key={idx}
-                  className="text-[11px] px-2 py-0.5 rounded bg-[#161a27] text-slate-300 border border-slate-800"
+                  className="text-[11px] font-medium px-2.5 py-0.5 rounded-md bg-[#1E1834] text-[#C5C0DC] border border-[#352C56]/70"
                 >
                   {tag}
                 </span>
@@ -114,8 +114,8 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
 
             {/* Review text if available */}
             {game.review && (
-              <div className="mt-2 flex items-start gap-1.5 text-xs text-slate-400 line-clamp-1 italic">
-                <MessageSquare className="w-3.5 h-3.5 text-cyan-400/80 shrink-0 mt-0.5" />
+              <div className="mt-2 flex items-start gap-1.5 text-xs text-[#9D96B8] line-clamp-1 italic">
+                <MessageSquare className="w-3.5 h-3.5 text-[#6967EB] shrink-0 mt-0.5" />
                 <span>{game.review}</span>
               </div>
             )}
@@ -123,16 +123,16 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
         </div>
 
         {/* Right: Rating, Status, Actions */}
-        <div className="flex items-center justify-between sm:justify-end gap-5 w-full sm:w-auto shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-800/60">
+        <div className="flex items-center justify-between sm:justify-end gap-5 w-full sm:w-auto shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-[#352C56]">
           {/* Rating */}
-          <div className="flex items-center gap-0.5 text-amber-400">
+          <div className="flex items-center gap-0.5 text-[#FFBE0B]">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
                 className={`w-4 h-4 ${
                   i < (game.rating || 0)
-                    ? 'fill-amber-400 text-amber-400'
-                    : 'text-slate-700'
+                    ? 'fill-[#FFBE0B] text-[#FFBE0B]'
+                    : 'text-[#44386E]'
                 }`}
               />
             ))}
@@ -146,7 +146,7 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
             {onDelete && (
               <button
                 onClick={() => onDelete(game._id.toString())}
-                className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-950/40 rounded-lg transition-colors"
+                className="p-2 text-[#9D96B8] hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors"
                 title="Eliminar registro"
               >
                 <Trash2 className="w-4 h-4" />

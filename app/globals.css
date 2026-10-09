@@ -2,83 +2,63 @@
 
 @layer base {
   :root {
-    --bg-main: #08090d;
-    --bg-card: #0f1118;
-    --bg-card-hover: #161924;
-    --neon-cyan: #00f3ff;
-    --neon-purple: #b026ff;
-    --neon-emerald: #00ff88;
-    --neon-gold: #ffbe0b;
-    --neon-silver: #cbd5e1;
-    --neon-bronze: #f97316;
+    --bg-main: #141124;
+    --bg-surface: #1E1834;
+    --bg-card: #272041;
+    --bg-card-hover: #322954;
+    --bg-card-subtle: #211B38;
+    --color-primary: #6967EB;
+    --color-cyan: #00CAFA;
+    --color-gold: #FFBE0B;
+    --color-silver: #CBD5E1;
+    --color-bronze: #F97316;
+    --color-emerald: #10B981;
+    --color-text: #FFFFFF;
+    --color-text-muted: #9D96B8;
   }
 
   body {
     background-color: var(--bg-main);
-    color: #e2e8f0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: #F1F0F7;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
   }
 }
 
-/* Neon Glow utilities */
-.neon-glow-cyan {
-  box-shadow: 0 0 20px -3px rgba(0, 243, 255, 0.35), inset 0 0 15px -5px rgba(0, 243, 255, 0.15);
+/* Subtle accent glows - non-intrusive */
+.accent-glow-primary {
+  box-shadow: 0 4px 20px -2px rgba(105, 103, 235, 0.35);
 }
 
-.neon-glow-purple {
-  box-shadow: 0 0 20px -3px rgba(176, 38, 255, 0.35), inset 0 0 15px -5px rgba(176, 38, 255, 0.15);
+.accent-glow-cyan {
+  box-shadow: 0 4px 20px -2px rgba(0, 202, 250, 0.3);
 }
 
-.neon-glow-emerald {
-  box-shadow: 0 0 20px -3px rgba(0, 255, 136, 0.35), inset 0 0 15px -5px rgba(0, 255, 136, 0.15);
+.accent-glow-gold {
+  box-shadow: 0 0 25px 2px rgba(255, 190, 11, 0.35);
 }
 
-.neon-glow-gold {
-  box-shadow: 0 0 25px -2px rgba(255, 190, 11, 0.45);
+.accent-glow-silver {
+  box-shadow: 0 0 18px 1px rgba(203, 213, 225, 0.25);
 }
 
-.neon-glow-silver {
-  box-shadow: 0 0 20px -2px rgba(203, 213, 225, 0.35);
+.accent-glow-bronze {
+  box-shadow: 0 0 18px 1px rgba(249, 115, 22, 0.25);
 }
 
-.neon-glow-bronze {
-  box-shadow: 0 0 20px -2px rgba(249, 115, 22, 0.4);
-}
-
-.neon-text-cyan {
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
-}
-
-.neon-text-purple {
-  text-shadow: 0 0 10px rgba(176, 38, 255, 0.6);
-}
-
-.neon-text-gold {
-  text-shadow: 0 0 12px rgba(255, 190, 11, 0.7);
-}
-
-/* Gamer Grid Subtle Background */
-.bg-gamer-grid {
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 32px 32px;
-}
-
-/* Custom Scrollbars */
+/* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #08090d;
+  background: #141124;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e2230;
-  border-radius: 4px;
+  background: #2D254D;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00f3ff55;
+  background: #6967EB;
 }
