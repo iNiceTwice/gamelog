@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Search, Sparkles, Star, Check, Loader2 } from 'lucide-react';
 import { NormalizedGame } from '@/lib/igdb/types';
+import { CustomSelect } from '@/components/ui/CustomSelect';
 
 interface AddGameModalProps {
   isOpen: boolean;
@@ -10,6 +11,20 @@ interface AddGameModalProps {
   onGameAdded: () => void;
   defaultStatus?: 'completed' | 'backlog';
 }
+
+const STATUS_OPTIONS = [
+  { value: 'completed', label: 'Terminado', icon: '✅' },
+  { value: 'backlog', label: 'Pendiente (Backlog)', icon: '⏳' },
+  { value: 'playing', label: 'Jugando actualmente', icon: '🕹️' },
+  { value: 'abandoned', label: 'Abandonado', icon: '🚫' },
+];
+
+const PODIUM_OPTIONS = [
+  { value: 'none', label: 'Sin medalla' },
+  { value: 'gold', label: 'Oro (1° Lugar / GOTY)', icon: '🥇' },
+  { value: 'silver', label: 'Plata (2° Lugar)', icon: '🥈' },
+  { value: 'bronze', label: 'Bronce (3° Lugar)', icon: '🥉' },
+];
 
 export const AddGameModal: React.FC<AddGameModalProps> = ({
   isOpen,
@@ -132,7 +147,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl border border-[#352C56] bg-[#1E1834] text-white shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#2E264E] bg-[#272041]">
@@ -144,7 +159,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-[#9D96B8] hover:text-white p-1 rounded-xl hover:bg-[#1E1834] transition-colors"
+            className="text-[#9D96B8] hover:text-white p-1.5 rounded-xl hover:bg-[#1E1834] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -164,16 +179,16 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
               1. Buscar en IGDB (Autocompletado de Portada & Géneros)
             </label>
             <div className="relative">
-              <Search className="w-4 h-4 text-[#9D96B8] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-[#9D96B8] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Escribe el nombre del juego (ej: Silksong, Elden Ring, Cyberpunk)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-[#141124] border border-[#352C56] text-white placeholder-[#787196] focus:outline-none focus:border-[#6967EB] text-sm"
+                className="w-full pl-11 pr-10 py-3 rounded-2xl bg-[#141124] border border-[#352C56] text-white placeholder-[#787196] focus:outline-none focus:border-[#6967EB] focus:ring-1 focus:ring-[#6967EB] text-sm transition-colors"
               />
               {isSearching && (
-                <Loader2 className="w-4 h-4 text-[#00CAFA] animate-spin absolute right-3.5 top-1/2 -translate-y-1/2" />
+                <Loader2 className="w-4 h-4 text-[#00CAFA] animate-spin absolute right-4 top-1/2 -translate-y-1/2" />
               )}
             </div>
 
@@ -223,7 +238,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                 placeholder="Nombre del juego..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3 py-1.5 rounded-xl bg-[#141124] border border-[#352C56] text-white font-bold text-sm focus:outline-none focus:border-[#6967EB]"
+                className="w-full px-3.5 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white font-bold text-sm focus:outline-none focus:border-[#6967EB] focus:ring-1 focus:ring-[#6967EB] transition-colors"
               />
               <div className="flex flex-wrap gap-1 mt-2">
                 {igdbGenres.map((g, idx) => (
@@ -245,16 +260,12 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                 <label className="block text-xs font-mono text-[#9D96B8] uppercase tracking-wider mb-1.5">
                   Estado
                 </label>
-                <select
+                <CustomSelect
                   value={status}
-                  onChange={(e) => setStatus(e.target.value as any)}
-                  className="w-full px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB] cursor-pointer"
-                >
-                  <option value="completed">✅ Terminado</option>
-                  <option value="backlog">⏳ Pendiente (Backlog)</option>
-                  <option value="playing">🕹️ Jugando actualmente</option>
-                  <option value="abandoned">🚫 Abandonado</option>
-                </select>
+                  onValueChange={(val) => setStatus(val as any)}
+                  options={STATUS_OPTIONS}
+                  placeholder="Selecciona el estado..."
+                />
               </div>
 
               {(status === 'completed' || status === 'abandoned') && (
@@ -266,7 +277,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                     type="number"
                     value={yearPlayed}
                     onChange={(e) => setYearPlayed(parseInt(e.target.value, 10))}
-                    className="w-full px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB] font-mono"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-[#141124] border border-[#352C56] text-white text-sm font-medium focus:outline-none focus:border-[#6967EB] focus:ring-1 focus:ring-[#6967EB] transition-colors"
                   />
                 </div>
               )}
@@ -281,7 +292,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                     value={backlogType}
                     onChange={(e) => setBacklogType(e.target.value)}
                     placeholder="ej: Hard, Casual, Cooperativo..."
-                    className="w-full px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB]"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB] focus:ring-1 focus:ring-[#6967EB] transition-colors"
                   />
                 </div>
               )}
@@ -295,7 +306,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                   <label className="block text-xs font-mono text-[#FFBE0B] uppercase tracking-wider mb-1.5">
                     Calificación
                   </label>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 py-1">
                     {[1, 2, 3, 4, 5].map((starVal) => (
                       <button
                         key={starVal}
@@ -318,21 +329,17 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                   </div>
                 </div>
 
-                {/* Podium */}
+                {/* Podium with Custom Radix Select */}
                 <div>
                   <label className="block text-xs font-mono text-[#FFBE0B] uppercase tracking-wider mb-1.5">
                     Podio de Honor Anual
                   </label>
-                  <select
+                  <CustomSelect
                     value={podium || 'none'}
-                    onChange={(e) => setPodium(e.target.value === 'none' ? null : (e.target.value as any))}
-                    className="w-full px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#FFBE0B] cursor-pointer"
-                  >
-                    <option value="none">Sin medalla</option>
-                    <option value="gold">🥇 Oro (1° Lugar / GOTY)</option>
-                    <option value="silver">🥈 Plata (2° Lugar)</option>
-                    <option value="bronze">🥉 Bronce (3° Lugar)</option>
-                  </select>
+                    onValueChange={(val) => setPodium(val === 'none' ? null : (val as any))}
+                    options={PODIUM_OPTIONS}
+                    placeholder="Elige medalla de honor..."
+                  />
                 </div>
               </div>
             )}
@@ -354,12 +361,12 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                       handleAddCustomTag();
                     }
                   }}
-                  className="flex-1 px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB]"
+                  className="flex-1 px-4 py-2.5 rounded-2xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB] focus:ring-1 focus:ring-[#6967EB] transition-colors"
                 />
                 <button
                   type="button"
                   onClick={handleAddCustomTag}
-                  className="px-4 py-2 rounded-xl bg-[#272041] border border-[#352C56] text-white text-xs font-bold hover:bg-[#322954] cursor-pointer"
+                  className="px-4 py-2.5 rounded-2xl bg-[#272041] border border-[#352C56] text-white text-xs font-bold hover:bg-[#322954] transition-colors cursor-pointer"
                 >
                   Agregar Tag
                 </button>
@@ -368,13 +375,13 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                 {customTags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-[#272041] text-[#00CAFA] border border-[#352C56]"
+                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-[#272041] text-[#00CAFA] border border-[#352C56]"
                   >
                     {tag}
                     <button
                       type="button"
                       onClick={() => handleRemoveCustomTag(tag)}
-                      className="hover:text-rose-400 font-bold ml-1"
+                      className="hover:text-rose-400 font-bold ml-1 cursor-pointer"
                     >
                       ×
                     </button>
@@ -400,7 +407,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
                   if (status === 'backlog') setNotes(e.target.value);
                   else setReview(e.target.value);
                 }}
-                className="w-full px-3 py-2 rounded-xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB] resize-none font-sans"
+                className="w-full px-4 py-3 rounded-2xl bg-[#141124] border border-[#352C56] text-white text-sm focus:outline-none focus:border-[#6967EB] focus:ring-1 focus:ring-[#6967EB] resize-none font-sans transition-colors"
               />
             </div>
 
@@ -409,14 +416,14 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl text-[#9D96B8] hover:text-white hover:bg-[#272041] text-sm font-medium transition-colors"
+                className="px-4 py-2.5 rounded-2xl text-[#9D96B8] hover:text-white hover:bg-[#272041] text-sm font-medium transition-colors cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#6967EB] hover:bg-[#5856d6] text-white font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#6967EB] hover:bg-[#5856d6] text-white font-bold text-sm tracking-wide shadow-md transition-all cursor-pointer disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

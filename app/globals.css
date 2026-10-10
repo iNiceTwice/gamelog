@@ -24,6 +24,21 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
+
+  /* Reset browser native input styles */
+  input, textarea, select {
+    color-scheme: dark;
+  }
+
+  /* Remove spin buttons on number inputs */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
 }
 
 /* Subtle accent glows - non-intrusive */
