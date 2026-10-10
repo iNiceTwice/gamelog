@@ -9,6 +9,7 @@ import { BacklogView } from '@/components/BacklogView';
 import { AddGameModal } from '@/components/AddGameModal';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import { RecommendationsView } from '@/components/RecommendationsView';
+import { CustomSelect } from '@/components/ui/CustomSelect';
 import { IGameEntry } from '@/models/GameEntry';
 import { NormalizedGame } from '@/lib/igdb/types';
 import { 
@@ -24,10 +25,11 @@ import {
 } from 'lucide-react';
 
 export default function HomePage() {
+  const currentYear = new Date().getFullYear();
   const [games, setGames] = useState<IGameEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'history' | 'backlog' | 'recommendations'>('history');
-  const [selectedYear, setSelectedYear] = useState<number | 'all'>(2025);
+  const [selectedYear, setSelectedYear] = useState<number | 'all'>(currentYear);
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'abandoned'>('all');
   const [searchFilter, setSearchFilter] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -53,14 +55,31 @@ export default function HomePage() {
     fetchGames();
   }, []);
 
-  // Compute available years from played games
-  const availableYears = useMemo(() => {
+  // Compute available years from played games + include currentYear
+  const yearOptions = useMemo(() => {
     const years = new Set<number>();
+    years.add(currentYear);
     games.forEach((g) => {
       if (g.yearPlayed) years.add(g.yearPlayed);
     });
-    return Array.from(years).sort((a, b) => b - a);
-  }, [games]);
+
+    const sortedYears = Array.from(years).sort((a, b) => b - a);
+
+    const options = [
+      ...sortedYears.map((y) => ({
+        value: y.toString(),
+        label: `${y}${y === currentYear ? ' (Actual)' : ''}`,
+        icon: y === currentYear ? '🔥' : '🗓️',
+      })),
+      {
+        value: 'all',
+        label: 'Ver Histórico Completo',
+        icon: '📚',
+      },
+    ];
+
+    return options;
+  }, [games, currentYear]);
 
   // Played games (history)
   const playedGames = useMemo(() => {
@@ -124,13 +143,13 @@ export default function HomePage() {
   // Handle status update (e.g. from backlog to playing/completed)
   const handleToggleStatus = async (game: IGameEntry, newStatus: 'playing' | 'completed') => {
     try {
-      const currentYear = new Date().getFullYear();
+      const activeYear = new Date().getFullYear();
       const res = await fetch(`/api/games/${game._id.toString()}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           status: newStatus,
-          yearPlayed: currentYear,
+          yearPlayed: activeYear,
           rating: newStatus === 'completed' ? 5 : undefined,
         }),
       });
@@ -138,7 +157,7 @@ export default function HomePage() {
       if (res.ok) {
         await fetchGames();
         if (newStatus === 'completed') {
-          toast.success(`¡"${game.title}" marcado como Terminado y trasladado al Historial ${currentYear}!`);
+          toast.success(`¡"${game.title}" marcado como Terminado y trasladado al Historial ${activeYear}!`);
         } else {
           toast.info(`¡Comenzaste a jugar "${game.title}"!`);
         }
@@ -240,51 +259,36 @@ export default function HomePage() {
         {/* TAB 1: HISTORY & PODIUM */}
         {activeTab === 'history' && (
           <div>
-            {/* Year Selector Tabs and Status Filters */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-[#2E264E]">
-              {/* Year buttons */}
-              <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto py-1">
-                <span className="text-xs font-mono text-[#9D96B8] uppercase tracking-wider mr-2 flex items-center gap-1 shrink-0">
-                  <Calendar className="w-3.5 h-3.5 text-[#00CAFA]" /> Año:
+            {/* Year Selector (Radix Select) and Status Filters */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pb-5 border-b border-[#2E264E]">
+              {/* Year Select Component */}
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <span className="text-xs font-mono text-[#9D96B8] uppercase tracking-wider flex items-center gap-1.5 shrink-0">
+                  <Calendar className="w-4 h-4 text-[#00CAFA]" /> Año:
                 </span>
-                {availableYears.map((year) => (
-                  <button
-                    key={year}
-                    onClick={() => setSelectedYear(year)}
-                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${
-                      selectedYear === year
-                        ? 'bg-[#272041] text-[#FFBE0B] border border-[#FFBE0B]/50 shadow-sm'
-                        : 'bg-[#1E1834] text-[#9D96B8] hover:text-white border border-[#2E264E]'
-                    }`}
-                  >
-                    {year}
-                  </button>
-                ))}
-                <button
-                  onClick={() => setSelectedYear('all')}
-                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${
-                    selectedYear === 'all'
-                      ? 'bg-[#272041] text-[#00CAFA] border border-[#00CAFA]/50 shadow-sm'
-                      : 'bg-[#1E1834] text-[#9D96B8] hover:text-white border border-[#2E264E]'
-                  }`}
-                >
-                  Ver Todos
-                </button>
+                <div className="w-56">
+                  <CustomSelect
+                    value={selectedYear.toString()}
+                    onValueChange={(val) => setSelectedYear(val === 'all' ? 'all' : parseInt(val, 10))}
+                    options={yearOptions}
+                    placeholder="Selecciona el año..."
+                  />
+                </div>
               </div>
 
               {/* Status Filter buttons */}
-              <div className="flex items-center gap-1.5 bg-[#1E1834] p-1 rounded-2xl border border-[#2E264E] text-xs">
+              <div className="flex items-center gap-1.5 bg-[#1E1834] p-1.5 rounded-2xl border border-[#2E264E] text-xs w-full sm:w-auto justify-center">
                 <button
                   onClick={() => setStatusFilter('all')}
-                  className={`px-3 py-1.5 rounded-xl font-semibold transition-colors cursor-pointer ${
-                    statusFilter === 'all' ? 'bg-[#272041] text-white shadow-sm' : 'text-[#9D96B8] hover:text-white'
+                  className={`px-3.5 py-2 rounded-xl font-semibold transition-colors cursor-pointer ${
+                    statusFilter === 'all' ? 'bg-[#272041] text-white shadow-sm border border-[#352C56]' : 'text-[#9D96B8] hover:text-white'
                   }`}
                 >
                   Todos
                 </button>
                 <button
                   onClick={() => setStatusFilter('completed')}
-                  className={`px-3 py-1.5 rounded-xl font-semibold transition-colors cursor-pointer ${
+                  className={`px-3.5 py-2 rounded-xl font-semibold transition-colors cursor-pointer ${
                     statusFilter === 'completed' ? 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30' : 'text-[#9D96B8] hover:text-white'
                   }`}
                 >
@@ -292,7 +296,7 @@ export default function HomePage() {
                 </button>
                 <button
                   onClick={() => setStatusFilter('abandoned')}
-                  className={`px-3 py-1.5 rounded-xl font-semibold transition-colors cursor-pointer ${
+                  className={`px-3.5 py-2 rounded-xl font-semibold transition-colors cursor-pointer ${
                     statusFilter === 'abandoned' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'text-[#9D96B8] hover:text-white'
                   }`}
                 >
@@ -318,20 +322,20 @@ export default function HomePage() {
 
               {/* Search input */}
               <div className="relative w-full sm:w-72">
-                <Search className="w-4 h-4 text-[#9D96B8] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-[#9D96B8] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
                   placeholder="Filtrar por título o género..."
                   value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 rounded-xl bg-[#1E1834] border border-[#352C56] text-white placeholder-[#787196] text-xs focus:outline-none focus:border-[#6967EB]"
+                  className="w-full pl-10 pr-3 py-2 rounded-xl bg-[#1E1834] border border-[#352C56] text-white placeholder-[#787196] text-xs focus:outline-none focus:border-[#6967EB] transition-colors"
                 />
               </div>
             </div>
 
             {/* Games List Rows */}
             {filteredHistoryGames.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {filteredHistoryGames.map((game) => (
                   <GameRow
                     key={game._id.toString()}
