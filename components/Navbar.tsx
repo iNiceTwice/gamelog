@@ -22,9 +22,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#2E264E] bg-[#1E1834]/95 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between">
         {/* Brand */}
-        <div className="flex items-center gap-3">
+        <div className="ml-2 flex items-center gap-3">
           <div className="h-11 w-11 rounded-2xl bg-[#272041] border border-[#3E3465] flex items-center justify-center shadow-md">
             <Gamepad2 className="w-6 h-6 text-[#00CAFA]" />
           </div>

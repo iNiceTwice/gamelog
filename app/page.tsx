@@ -188,8 +188,8 @@ export default function HomePage() {
         stats={stats}
       />
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Main Container - Extended width */}
+      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10 py-8">
         {/* Quick Stats Pill Cards */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           <div className="p-4 rounded-2xl border border-[#352C56] bg-[#272041] flex items-center gap-3.5 shadow-sm">
@@ -430,9 +430,9 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="mt-16 border-t border-[#2E264E] bg-[#141124] py-6">
-        <div className="max-w-7xl mx-auto px-4 text-center text-xs text-[#9D96B8]">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 text-center text-xs text-[#9D96B8]">
           <p>
-            <span className="text-[#00CAFA] font-bold">gamelog.gg</span> — Tu bitácora de videojuegos personal. Estética gamer CS:GO & paleta Okta Neue.
+            <span className="text-[#00CAFA] font-bold">gamelog.gg</span> — Tu bitácora de videojuegos personal.
           </p>
         </div>
       </footer>
