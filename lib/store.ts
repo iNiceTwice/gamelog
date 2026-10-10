@@ -1,21 +1,10 @@
 import { connectToDatabase } from './mongodb';
 import { getAuthenticatedUser } from './auth';
 import { GameEntry, IGameEntry } from '@/models/GameEntry';
-import { NOTION_INITIAL_DATA } from './initial-data';
 
 export async function getAllGameEntries(filter?: { status?: string; year?: string }): Promise<any[]> {
   await connectToDatabase();
   const user = await getAuthenticatedUser();
-
-  // If user has zero records on fresh database, seed their initial Notion entries
-  const count = await GameEntry.countDocuments({ userId: user._id });
-  if (count === 0) {
-    const docs = NOTION_INITIAL_DATA.map((entry) => ({
-      ...entry,
-      userId: user._id,
-    }));
-    await GameEntry.insertMany(docs);
-  }
 
   const query: Record<string, any> = { userId: user._id };
   if (filter?.status) query.status = filter.status;
