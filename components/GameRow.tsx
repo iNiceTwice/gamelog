@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Star, CheckCircle2, Ban, PlayCircle, Trash2, MessageSquare, Sparkles } from 'lucide-react';
+import { Star, CheckCircle2, Ban, PlayCircle, Trash2, MessageSquare } from 'lucide-react';
 import { IGameEntry } from '@/models/GameEntry';
 
 interface GameRowProps {
@@ -46,21 +46,21 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
   const getPodiumBadge = () => {
     if (game.podium === 'gold') {
       return (
-        <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-black bg-[#FFBE0B] text-black shadow-lg shadow-[#FFBE0B]/30 tracking-wide">
+        <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-black bg-[#FFBE0B] text-black shadow-lg shadow-[#FFBE0B]/40 tracking-wide">
           🥇 GOTY
         </span>
       );
     }
     if (game.podium === 'silver') {
       return (
-        <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-black bg-[#CBD5E1] text-black shadow-lg shadow-[#CBD5E1]/30 tracking-wide">
+        <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-black bg-[#CBD5E1] text-black shadow-lg shadow-[#CBD5E1]/40 tracking-wide">
           🥈 Plata
         </span>
       );
     }
     if (game.podium === 'bronze') {
       return (
-        <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-black bg-[#F97316] text-black shadow-lg shadow-[#F97316]/30 tracking-wide">
+        <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-black bg-[#F97316] text-black shadow-lg shadow-[#F97316]/40 tracking-wide">
           🥉 Bronce
         </span>
       );
@@ -72,62 +72,62 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
   const cover = game.coverUrl || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600';
 
   return (
-    <div className="group relative rounded-3xl border border-[#352C56]/80 bg-[#1A152E] overflow-hidden transition-all duration-300 hover:border-[#6967EB]/70 hover:shadow-[0_10px_35px_rgba(0,0,0,0.5)]">
-      {/* 1. Cinematic Blurred Backdrop Layer (Cover art diffused and blurred in the background) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="group relative rounded-3xl border border-[#352C56]/80 bg-[#1A152E] overflow-hidden transition-all duration-300 hover:border-[#6967EB]/70 hover:shadow-[0_10px_35px_rgba(0,0,0,0.5)] flex flex-col md:flex-row items-stretch min-h-[170px]">
+      {/* 1. Cinematic Blurred Backdrop Layer (whole card ambient glow) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <img
           src={cover}
           alt=""
-          className="w-full h-full object-cover object-center scale-125 blur-2xl opacity-25 group-hover:opacity-35 group-hover:scale-130 transition-all duration-500"
+          className="w-full h-full object-cover object-center scale-135 blur-3xl opacity-20 group-hover:opacity-30 group-hover:scale-140 transition-all duration-500"
         />
-        {/* Dark vignette & elegant gradient mask matching the reference */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1A152E]/95 via-[#1A152E]/85 to-[#1A152E]/90" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#141124] via-transparent to-transparent opacity-80" />
+        <div className="absolute inset-0 bg-[#1A152E]/70" />
       </div>
 
-      {/* 2. Content Container */}
-      <div className="relative z-10 p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-        {/* Left Side: Sharp Poster with glowing reflection + Typography */}
-        <div className="flex items-start sm:items-center gap-5 min-w-0 flex-1">
-          {/* Sharp Poster Thumbnail with subtle border */}
-          <div className="relative shrink-0 rounded-2xl overflow-hidden shadow-2xl border border-white/15 w-20 h-28 sm:w-24 sm:h-32 bg-[#141124]">
-            <img
-              src={cover}
-              alt={game.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            {game.podium && (
-              <div className="absolute top-1.5 left-1.5 scale-90 origin-top-left">
-                {getPodiumBadge()}
-              </div>
-            )}
-          </div>
+      {/* 2. Left Edge-to-Edge Hero Image with Seamless Right Fade-Out */}
+      <div className="relative w-full md:w-72 lg:w-84 shrink-0 h-48 md:h-auto overflow-hidden z-10">
+        <img
+          src={cover}
+          alt={game.title}
+          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+        />
 
-          {/* Details & Metadata Pill Row (like Netflix / Streaming style in reference) */}
+        {/* Seamless Fade-out Gradient on the Right edge (blending into the card and text) */}
+        <div className="hidden md:block absolute inset-y-0 right-0 w-32 bg-gradient-to-r from-transparent via-[#1A152E]/80 to-[#1A152E]" />
+
+        {/* Bottom Fade-out for Mobile / Vertical layout */}
+        <div className="md:hidden absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#1A152E] via-[#1A152E]/70 to-transparent" />
+
+        {/* Floating Podium Badge directly pinned to the top-left corner */}
+        {game.podium && (
+          <div className="absolute top-3.5 left-3.5 z-20">
+            {getPodiumBadge()}
+          </div>
+        )}
+      </div>
+
+      {/* 3. Content Container (blended with the image fade-out) */}
+      <div className="relative z-10 p-5 sm:p-6 md:pl-2 flex-1 flex flex-col justify-between gap-4 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+          {/* Main Info */}
           <div className="min-w-0 flex-1 space-y-2">
-            {/* Title & Podium if not on cover */}
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h4 className="font-extrabold text-xl text-white tracking-tight group-hover:text-[#00CAFA] transition-colors truncate">
+            {/* Title */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <h4 className="font-extrabold text-xl sm:text-2xl text-white tracking-tight group-hover:text-[#00CAFA] transition-colors truncate">
                 {game.title}
               </h4>
-              {game.podium && (
-                <div className="hidden sm:block">
-                  {getPodiumBadge()}
-                </div>
-              )}
             </div>
 
             {/* Pill Badges: Rating pill (★ 5.0), Year, Status */}
             <div className="flex items-center gap-2 flex-wrap text-xs">
               {game.rating && (
-                <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FFBE0B]/20 text-[#FFBE0B] border border-[#FFBE0B]/40 font-bold backdrop-blur-md">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFBE0B]/20 text-[#FFBE0B] border border-[#FFBE0B]/40 font-bold backdrop-blur-md shadow-sm">
                   <Star className="w-3.5 h-3.5 fill-[#FFBE0B]" />
                   <span>{game.rating}.0</span>
                 </div>
               )}
 
               {game.yearPlayed && (
-                <span className="px-2.5 py-1 rounded-full bg-[#1E1834]/80 text-[#C5C0DC] border border-[#352C56] font-mono text-[11px] backdrop-blur-md">
+                <span className="px-3 py-1 rounded-full bg-[#1E1834]/90 text-[#C5C0DC] border border-[#352C56] font-mono text-xs font-semibold backdrop-blur-md">
                   {game.yearPlayed}
                 </span>
               )}
@@ -136,11 +136,11 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
             </div>
 
             {/* Genre Tags (subtle minimalist row) */}
-            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
               {displayTags?.map((tag, idx) => (
                 <span
                   key={idx}
-                  className="text-[11px] font-medium px-2.5 py-0.5 rounded-lg bg-[#272041]/70 text-[#9D96B8] border border-[#352C56]/60 backdrop-blur-sm"
+                  className="text-[11px] font-medium px-2.5 py-0.5 rounded-lg bg-[#272041]/80 text-[#9D96B8] border border-[#352C56]/60 backdrop-blur-sm"
                 >
                   {tag}
                 </span>
@@ -149,25 +149,25 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
 
             {/* Review Note quote (styled like the plot summary in the reference) */}
             {game.review && (
-              <div className="pt-1 flex items-start gap-2 text-xs text-[#C5C0DC] leading-relaxed line-clamp-2">
-                <MessageSquare className="w-3.5 h-3.5 text-[#6967EB] shrink-0 mt-0.5 opacity-80" />
+              <div className="pt-2 flex items-start gap-2.5 text-xs sm:text-sm text-[#C5C0DC] leading-relaxed line-clamp-2">
+                <MessageSquare className="w-4 h-4 text-[#6967EB] shrink-0 mt-0.5 opacity-80" />
                 <span className="italic">"{game.review}"</span>
               </div>
             )}
           </div>
-        </div>
 
-        {/* Right Side: Quick Action Button */}
-        <div className="flex items-center justify-end sm:flex-col sm:justify-center gap-2 shrink-0 w-full sm:w-auto border-t sm:border-t-0 pt-3 sm:pt-0 border-white/10">
-          {onDelete && (
-            <button
-              onClick={() => onDelete(game._id.toString())}
-              className="p-2.5 text-[#9D96B8] hover:text-rose-400 hover:bg-rose-500/15 rounded-2xl border border-transparent hover:border-rose-500/30 transition-all cursor-pointer"
-              title="Eliminar de mi biblioteca"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          )}
+          {/* Quick Action Button */}
+          <div className="flex items-center justify-end sm:flex-col sm:justify-start gap-2 shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-white/10">
+            {onDelete && (
+              <button
+                onClick={() => onDelete(game._id.toString())}
+                className="p-2.5 text-[#9D96B8] hover:text-rose-400 hover:bg-rose-500/15 rounded-2xl border border-transparent hover:border-rose-500/30 transition-all cursor-pointer"
+                title="Eliminar de mi biblioteca"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
