@@ -15,28 +15,28 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
     switch (game.status) {
       case 'completed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40 backdrop-blur-md">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40 backdrop-blur-md">
             <CheckCircle2 className="w-3.5 h-3.5" />
             Terminado
           </span>
         );
       case 'abandoned':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/40 backdrop-blur-md">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/40 backdrop-blur-md">
             <Ban className="w-3.5 h-3.5" />
             Abandonado
           </span>
         );
       case 'playing':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#00CAFA]/20 text-[#00CAFA] border border-[#00CAFA]/40 backdrop-blur-md">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#00CAFA]/20 text-[#00CAFA] border border-[#00CAFA]/40 backdrop-blur-md">
             <PlayCircle className="w-3.5 h-3.5" />
             Jugando
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#1E1834]/80 text-[#9D96B8] border border-[#352C56] backdrop-blur-md">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#1E1834]/80 text-[#9D96B8] border border-[#352C56] backdrop-blur-md">
             Pendiente
           </span>
         );
@@ -46,21 +46,21 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
   const getPodiumBadge = () => {
     if (game.podium === 'gold') {
       return (
-        <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-black bg-[#FFBE0B] text-black shadow-lg shadow-[#FFBE0B]/40 tracking-wide">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-black bg-[#FFBE0B] text-black shadow-md tracking-wide">
           🥇 GOTY
         </span>
       );
     }
     if (game.podium === 'silver') {
       return (
-        <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-black bg-[#CBD5E1] text-black shadow-lg shadow-[#CBD5E1]/40 tracking-wide">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-black bg-[#CBD5E1] text-black shadow-md tracking-wide">
           🥈 Plata
         </span>
       );
     }
     if (game.podium === 'bronze') {
       return (
-        <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-black bg-[#F97316] text-black shadow-lg shadow-[#F97316]/40 tracking-wide">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-black bg-[#F97316] text-black shadow-md tracking-wide">
           🥉 Bronce
         </span>
       );
@@ -72,97 +72,90 @@ export const GameRow: React.FC<GameRowProps> = ({ game, onEdit, onDelete }) => {
   const cover = game.coverUrl || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600';
 
   return (
-    <div className="group relative rounded-3xl border border-[#352C56]/80 bg-[#1A152E] overflow-hidden transition-all duration-300 hover:border-[#6967EB]/70 hover:shadow-[0_10px_35px_rgba(0,0,0,0.5)] flex flex-col md:flex-row items-stretch min-h-[170px]">
-      {/* 1. Cinematic Blurred Backdrop Layer (whole card ambient glow) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <img
-          src={cover}
-          alt=""
-          className="w-full h-full object-cover object-center scale-135 blur-3xl opacity-20 group-hover:opacity-30 group-hover:scale-140 transition-all duration-500"
-        />
-        <div className="absolute inset-0 bg-[#1A152E]/70" />
-      </div>
-
-      {/* 2. Left Edge-to-Edge Hero Image with Seamless Right Fade-Out */}
-      <div className="relative w-full md:w-72 lg:w-84 shrink-0 h-48 md:h-auto overflow-hidden z-10">
+    <div className="group relative rounded-2xl border border-[#352C56] bg-[#272041] overflow-hidden transition-all duration-200 hover:border-[#6967EB]/60 hover:bg-[#2C244C] flex items-stretch min-h-[96px] sm:min-h-[104px]">
+      {/* 1. Left Edge-to-Edge Hero Image (Compact height, 100% left corner with zero padding/margin) */}
+      <div className="relative w-28 sm:w-36 md:w-44 shrink-0 overflow-hidden bg-[#141124]">
         <img
           src={cover}
           alt={game.title}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
         />
 
-        {/* Seamless Fade-out Gradient on the Right edge (blending into the card and text) */}
-        <div className="hidden md:block absolute inset-y-0 right-0 w-32 bg-gradient-to-r from-transparent via-[#1A152E]/80 to-[#1A152E]" />
+        {/* Cinematic Filter & Horizontal Fade-out directly on the image */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#272041]/40 to-[#272041]" />
+        {/* Subtle dark tint over the image to enhance text legibility */}
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
 
-        {/* Bottom Fade-out for Mobile / Vertical layout */}
-        <div className="md:hidden absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#1A152E] via-[#1A152E]/70 to-transparent" />
-
-        {/* Floating Podium Badge directly pinned to the top-left corner */}
+        {/* Podium badge directly pinned on top-left of image */}
         {game.podium && (
-          <div className="absolute top-3.5 left-3.5 z-20">
+          <div className="absolute top-2 left-2 z-10 scale-90 origin-top-left">
             {getPodiumBadge()}
           </div>
         )}
       </div>
 
-      {/* 3. Content Container (blended with the image fade-out) */}
-      <div className="relative z-10 p-5 sm:p-6 md:pl-2 flex-1 flex flex-col justify-between gap-4 min-w-0">
-        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-          {/* Main Info */}
-          <div className="min-w-0 flex-1 space-y-2">
-            {/* Title */}
-            <div className="flex items-center gap-3 flex-wrap">
-              <h4 className="font-extrabold text-xl sm:text-2xl text-white tracking-tight group-hover:text-[#00CAFA] transition-colors truncate">
-                {game.title}
-              </h4>
-            </div>
-
-            {/* Pill Badges: Rating pill (★ 5.0), Year, Status */}
-            <div className="flex items-center gap-2 flex-wrap text-xs">
-              {game.rating && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFBE0B]/20 text-[#FFBE0B] border border-[#FFBE0B]/40 font-bold backdrop-blur-md shadow-sm">
-                  <Star className="w-3.5 h-3.5 fill-[#FFBE0B]" />
-                  <span>{game.rating}.0</span>
-                </div>
-              )}
-
-              {game.yearPlayed && (
-                <span className="px-3 py-1 rounded-full bg-[#1E1834]/90 text-[#C5C0DC] border border-[#352C56] font-mono text-xs font-semibold backdrop-blur-md">
-                  {game.yearPlayed}
-                </span>
-              )}
-
-              <div>{getStatusBadge()}</div>
-            </div>
-
-            {/* Genre Tags (subtle minimalist row) */}
-            <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              {displayTags?.map((tag, idx) => (
-                <span
-                  key={idx}
-                  className="text-[11px] font-medium px-2.5 py-0.5 rounded-lg bg-[#272041]/80 text-[#9D96B8] border border-[#352C56]/60 backdrop-blur-sm"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            {/* Review Note quote (styled like the plot summary in the reference) */}
-            {game.review && (
-              <div className="pt-2 flex items-start gap-2.5 text-xs sm:text-sm text-[#C5C0DC] leading-relaxed line-clamp-2">
-                <MessageSquare className="w-4 h-4 text-[#6967EB] shrink-0 mt-0.5 opacity-80" />
-                <span className="italic">"{game.review}"</span>
-              </div>
+      {/* 2. Content Row (Compact original height, seamlessly merged with the fade-out) */}
+      <div className="flex-1 py-3 px-4 sm:px-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 min-w-0 z-10">
+        {/* Center Text Info */}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h4 className="font-bold text-base text-white group-hover:text-[#00CAFA] transition-colors truncate">
+              {game.title}
+            </h4>
+            {game.yearPlayed && (
+              <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-full bg-[#1E1834] text-[#9D96B8] border border-[#352C56]">
+                {game.yearPlayed}
+              </span>
             )}
           </div>
 
-          {/* Quick Action Button */}
-          <div className="flex items-center justify-end sm:flex-col sm:justify-start gap-2 shrink-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-white/10">
+          {/* Genre Tags */}
+          <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+            {displayTags?.slice(0, 3).map((tag, idx) => (
+              <span
+                key={idx}
+                className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-[#1E1834]/80 text-[#C5C0DC] border border-[#352C56]/70"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          {/* Review note quote if available */}
+          {game.review && (
+            <div className="mt-1.5 flex items-start gap-1.5 text-xs text-[#9D96B8] line-clamp-1 italic">
+              <MessageSquare className="w-3.5 h-3.5 text-[#6967EB] shrink-0 mt-0.5" />
+              <span>{game.review}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Right Info: Rating, Status Badge & Actions */}
+        <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-[#352C56]">
+          {/* Star Rating */}
+          <div className="flex items-center gap-0.5 text-[#FFBE0B]">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`w-4 h-4 ${
+                  i < (game.rating || 0)
+                    ? 'fill-[#FFBE0B] text-[#FFBE0B]'
+                    : 'text-[#44386E]'
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Status Badge */}
+          <div className="shrink-0">{getStatusBadge()}</div>
+
+          {/* Action Delete */}
+          <div className="flex items-center gap-1">
             {onDelete && (
               <button
                 onClick={() => onDelete(game._id.toString())}
-                className="p-2.5 text-[#9D96B8] hover:text-rose-400 hover:bg-rose-500/15 rounded-2xl border border-transparent hover:border-rose-500/30 transition-all cursor-pointer"
-                title="Eliminar de mi biblioteca"
+                className="p-1.5 text-[#9D96B8] hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer"
+                title="Eliminar registro"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
