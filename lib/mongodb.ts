@@ -5,7 +5,6 @@ const MONGODB_URI = process.env.MONGO_URI || process.env.MONGO_URL;
 interface MongooseCache {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
-  isAvailable: boolean;
 }
 
 declare global {
@@ -16,13 +15,12 @@ declare global {
 let cached = global.mongooseCache;
 
 if (!cached) {
-  cached = global.mongooseCache = { conn: null, promise: null, isAvailable: false };
+  cached = global.mongooseCache = { conn: null, promise: null };
 }
 
-export async function connectToDatabase(): Promise<typeof mongoose | null> {
+export async function connectToDatabase(): Promise<typeof mongoose> {
   if (!MONGODB_URI) {
-    cached!.isAvailable = false;
-    return null;
+    throw new Error('Please define the MONGO_URI or MONGO_URL environment variable');
   }
 
   if (cached!.conn) {
@@ -33,33 +31,18 @@ export async function connectToDatabase(): Promise<typeof mongoose | null> {
     const opts = {
       bufferCommands: false,
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 2500,
+      serverSelectionTimeoutMS: 5000,
     };
 
-    cached!.promise = mongoose.connect(MONGODB_URI, opts)
-      .then((instance) => {
-        cached!.isAvailable = true;
-        return instance;
-      })
-      .catch((err) => {
-        console.warn('MongoDB connection note: Live cluster unreachable or bad auth. Falling back to local in-memory store.', err.message);
-        cached!.isAvailable = false;
-        cached!.promise = null;
-        return null as any;
-      });
+    cached!.promise = mongoose.connect(MONGODB_URI, opts).then((instance) => instance);
   }
 
   try {
     cached!.conn = await cached!.promise;
   } catch (e) {
     cached!.promise = null;
-    cached!.isAvailable = false;
-    return null;
+    throw e;
   }
 
   return cached!.conn;
-}
-
-export function isMongoConnected(): boolean {
-  return cached?.isAvailable ?? false;
 }

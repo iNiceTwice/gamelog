@@ -7,8 +7,8 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get('status') || undefined;
     const year = searchParams.get('year') || undefined;
 
-    const { entries, isUsingFallback } = await getAllGameEntries({ status, year });
-    return NextResponse.json({ success: true, data: entries, isUsingFallback });
+    const entries = await getAllGameEntries({ status, year });
+    return NextResponse.json({ success: true, data: entries });
   } catch (error: any) {
     console.error('Error fetching games:', error);
     return NextResponse.json(

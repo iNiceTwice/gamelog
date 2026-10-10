@@ -4,8 +4,8 @@ import { searchGamesInIGDB } from '@/lib/igdb/client';
 
 export async function GET() {
   try {
-    const { entries: userGames } = await getAllGameEntries();
-    const userGameTitles = new Set(userGames.map((g) => g.title.toLowerCase().trim()));
+    const userGames = await getAllGameEntries();
+    const userGameTitles = new Set(userGames.map((g: any) => g.title.toLowerCase().trim()));
 
     // Get favorite genres from 4 and 5 star games
     const genreCounts: Record<string, number> = {};
@@ -22,8 +22,10 @@ export async function GET() {
       .map(([genre]) => genre)
       .slice(0, 3);
 
-    // Candidates pool
-    const candidates = await searchGamesInIGDB('');
+    // Candidates directly from real live IGDB
+    const primaryGenre = topGenres[0] || 'Role-playing (RPG)';
+    const candidates = await searchGamesInIGDB(primaryGenre);
+
     const recommendations = candidates
       .filter((candidate) => !userGameTitles.has(candidate.title.toLowerCase().trim()))
       .map((candidate) => {
@@ -36,7 +38,7 @@ export async function GET() {
           reason:
             matchingGenres.length > 0
               ? `Recomendado por tu afinidad con: ${matchingGenres.join(', ')}`
-              : 'Basado en los títulos mejor calificados de la comunidad',
+              : 'Basado en los títulos mejor calificados de IGDB',
         };
       })
       .slice(0, 4);
