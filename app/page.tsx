@@ -11,6 +11,7 @@ import { ConfirmModal } from '@/components/ConfirmModal';
 import { RecommendationsView } from '@/components/RecommendationsView';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 import { GameFilterControls } from '@/components/GameFilterControls';
+import { LoadingScreen } from '@/components/LoadingScreen';
 import { IGameEntry } from '@/models/GameEntry';
 import { NormalizedGame } from '@/lib/igdb/types';
 import { 
@@ -45,9 +46,9 @@ export default function HomePage() {
   const [gameToDelete, setGameToDelete] = useState<{ id: string; title: string } | null>(null);
 
   // Fetch games
-  const fetchGames = async () => {
+  const fetchGames = async (isInitial = false) => {
     try {
-      setLoading(true);
+      if (isInitial) setLoading(true);
       const res = await fetch('/api/games');
       const json = await res.json();
       if (json.success) {
@@ -56,12 +57,12 @@ export default function HomePage() {
     } catch (err) {
       console.error('Error fetching games:', err);
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchGames();
+    fetchGames(true);
   }, []);
 
   // Compute available years from played games + include currentYear
@@ -275,6 +276,10 @@ export default function HomePage() {
       toast.error('Error al agregar el juego');
     }
   };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="flex-1 flex flex-col">
