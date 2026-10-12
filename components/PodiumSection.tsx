@@ -16,6 +16,26 @@ export const PodiumSection: React.FC<PodiumSectionProps> = ({ games, selectedYea
   const silverGame = games.find((g) => g.podium === 'silver' && g.yearPlayed === selectedYear);
   const bronzeGame = games.find((g) => g.podium === 'bronze' && g.yearPlayed === selectedYear);
 
+  const getCombinedTags = (game: IGameEntry): string[] => {
+    const custom = game.customTags || [];
+    const igdb = game.igdbGenres || [];
+    const combined: string[] = [];
+    const seen = new Set<string>();
+
+    [...custom, ...igdb].forEach((tag) => {
+      if (!tag) return;
+      const trimmed = tag.trim();
+      if (!trimmed) return;
+      const lower = trimmed.toLowerCase();
+      if (!seen.has(lower)) {
+        seen.add(lower);
+        combined.push(trimmed);
+      }
+    });
+
+    return combined;
+  };
+
   if (!goldGame && !silverGame && !bronzeGame) {
     return (
       <div className="mb-10 p-6 rounded-2xl border border-[#352c56]/60 bg-[#1E1834]/60 text-center">
@@ -48,8 +68,8 @@ export const PodiumSection: React.FC<PodiumSectionProps> = ({ games, selectedYea
         <div className="order-2 md:order-1">
           {silverGame ? (
             <div className="relative group rounded-2xl p-5 border border-[#3e3465] bg-[#272041] transition-all duration-300 hover:border-[#CBD5E1]/60 hover:bg-[#2c244c]">
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[#1E1834] border border-[#CBD5E1]/70 text-[#CBD5E1] text-xs font-black tracking-wider flex items-center gap-1.5 shadow-sm">
-                <span>🥈</span> 2° PUESTO
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[#1E1834] border border-[#CBD5E1] text-[#CBD5E1] text-xs font-black tracking-wider flex items-center gap-1.5 shadow-sm">
+                <span>🥈</span> 2º PUESTO
               </div>
               <div className="mt-2 flex gap-4">
                 <img
@@ -58,7 +78,7 @@ export const PodiumSection: React.FC<PodiumSectionProps> = ({ games, selectedYea
                   className="w-20 h-28 object-cover rounded-xl border border-white/10 shadow-md shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-white text-base truncate group-hover:text-[#00CAFA] transition-colors">
+                  <h3 className="font-bold text-white text-base truncate group-hover:text-[#CBD5E1] transition-colors">
                     {silverGame.title}
                   </h3>
                   <div className="flex items-center gap-1 my-1.5 text-[#FFBE0B]">
@@ -74,8 +94,8 @@ export const PodiumSection: React.FC<PodiumSectionProps> = ({ games, selectedYea
                     ))}
                   </div>
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {(silverGame.customTags.length > 0 ? silverGame.customTags : silverGame.igdbGenres)
-                      .slice(0, 2)
+                    {getCombinedTags(silverGame)
+                      .slice(0, 3)
                       .map((t, idx) => (
                         <span
                           key={idx}
@@ -135,8 +155,8 @@ export const PodiumSection: React.FC<PodiumSectionProps> = ({ games, selectedYea
                     ))}
                   </div>
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {(goldGame.customTags.length > 0 ? goldGame.customTags : goldGame.igdbGenres)
-                      .slice(0, 3)
+                    {getCombinedTags(goldGame)
+                      .slice(0, 4)
                       .map((t, idx) => (
                         <span
                           key={idx}
@@ -167,7 +187,7 @@ export const PodiumSection: React.FC<PodiumSectionProps> = ({ games, selectedYea
           {bronzeGame ? (
             <div className="relative group rounded-2xl p-5 border border-[#4d3345] bg-[#272041] transition-all duration-300 hover:border-[#F97316]/60 hover:bg-[#2c244c]">
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[#1E1834] border border-[#F97316] text-[#F97316] text-xs font-black tracking-wider flex items-center gap-1.5 shadow-sm">
-                <span>🥉</span> 3° PUESTO
+                <span>🥉</span> 3º PUESTO
               </div>
               <div className="mt-2 flex gap-4">
                 <img
@@ -192,8 +212,8 @@ export const PodiumSection: React.FC<PodiumSectionProps> = ({ games, selectedYea
                     ))}
                   </div>
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {(bronzeGame.customTags.length > 0 ? bronzeGame.customTags : bronzeGame.igdbGenres)
-                      .slice(0, 2)
+                    {getCombinedTags(bronzeGame)
+                      .slice(0, 3)
                       .map((t, idx) => (
                         <span
                           key={idx}

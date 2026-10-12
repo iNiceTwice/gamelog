@@ -25,20 +25,14 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between">
         {/* Brand */}
         <div className="ml-2 flex items-center gap-3">
-          <div className="h-11 w-11 rounded-2xl bg-[#272041] border border-[#3E3465] flex items-center justify-center shadow-md">
-            <Gamepad2 className="w-6 h-6 text-[#00CAFA]" />
-          </div>
           <div>
             <div className="flex items-center gap-2">
               <span className="text-2xl font-black tracking-tight text-white font-sans">
                 gamelog<span className="text-[#00CAFA]">.gg</span>
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#6967EB]/20 text-[#6967EB] border border-[#6967EB]/30">
-                PRO
-              </span>
             </div>
             <p className="text-xs text-[#9D96B8] hidden sm:block">
-              Biblioteca & Podio Gamer Personal
+              Track like a tryhard
             </p>
           </div>
         </div>

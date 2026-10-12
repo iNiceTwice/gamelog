@@ -10,6 +10,7 @@ import { AddGameModal } from '@/components/AddGameModal';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import { RecommendationsView } from '@/components/RecommendationsView';
 import { CustomSelect } from '@/components/ui/CustomSelect';
+import { GameFilterControls } from '@/components/GameFilterControls';
 import { IGameEntry } from '@/models/GameEntry';
 import { NormalizedGame } from '@/lib/igdb/types';
 import { 
@@ -18,10 +19,10 @@ import {
   Star, 
   CheckCircle2, 
   Clock, 
-  Search,
   Calendar,
   Layers,
-  Sparkles
+  Sparkles,
+  Plus
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -31,8 +32,16 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'history' | 'backlog' | 'recommendations'>('history');
   const [selectedYear, setSelectedYear] = useState<number | 'all'>(currentYear);
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'abandoned'>('all');
+  
+  // History filters (Search, Chill/Hard type, Podium, Categories multi-select)
   const [searchFilter, setSearchFilter] = useState('');
+  const [historyTypeFilter, setHistoryTypeFilter] = useState<'all' | 'Chill' | 'Hard'>('all');
+  const [historyPodiumFilter, setHistoryPodiumFilter] = useState<'all' | 'any' | 'gold' | 'silver' | 'bronze'>('all');
+  const [historySelectedCategories, setHistorySelectedCategories] = useState<string[]>([]);
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [modalDefaultStatus, setModalDefaultStatus] = useState<'completed' | 'backlog'>('completed');
+  const [gameToEdit, setGameToEdit] = useState<IGameEntry | null>(null);
   const [gameToDelete, setGameToDelete] = useState<{ id: string; title: string } | null>(null);
 
   // Fetch games
@@ -83,7 +92,7 @@ export default function HomePage() {
 
   // Played games (history)
   const playedGames = useMemo(() => {
-    return games.filter((g) => g.status === 'completed' || g.status === 'abandoned' || g.status === 'playing');
+    return games.filter((g) => g.status === 'completed' || g.status === 'abandoned');
   }, [games]);
 
   // Backlog games
@@ -91,19 +100,72 @@ export default function HomePage() {
     return games.filter((g) => g.status === 'backlog');
   }, [games]);
 
-  // Filtered played games for the list
+  // Unique categories and themes available across all played games
+  const historyAvailableCategories = useMemo(() => {
+    const set = new Set<string>();
+    playedGames.forEach((g) => {
+      (g.customTags || []).forEach((t) => t && t.trim() && set.add(t.trim()));
+      (g.igdbGenres || []).forEach((t) => t && t.trim() && set.add(t.trim()));
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+  }, [playedGames]);
+
+  // Filtered played games for the history list
   const filteredHistoryGames = useMemo(() => {
     return playedGames.filter((g) => {
       const matchYear = selectedYear === 'all' || g.yearPlayed === selectedYear;
       const matchStatus = statusFilter === 'all' || g.status === statusFilter;
-      const matchSearch =
-        !searchFilter.trim() ||
-        g.title.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        (g.customTags || []).some((t) => t.toLowerCase().includes(searchFilter.toLowerCase())) ||
-        (g.igdbGenres || []).some((t) => t.toLowerCase().includes(searchFilter.toLowerCase()));
-      return matchYear && matchStatus && matchSearch;
+
+      // Chill / Hard filter
+      if (historyTypeFilter !== 'all') {
+        if (g.backlogType !== historyTypeFilter) return false;
+      }
+
+      // Podium filter
+      if (historyPodiumFilter !== 'all') {
+        if (historyPodiumFilter === 'any') {
+          if (!g.podium) return false;
+        } else {
+          if (g.podium !== historyPodiumFilter) return false;
+        }
+      }
+
+      // Categories multi-select filter
+      if (historySelectedCategories.length > 0) {
+        const gameCats = [
+          ...(g.customTags || []),
+          ...(g.igdbGenres || []),
+        ].map((c) => c.toLowerCase().trim());
+
+        const hasMatch = historySelectedCategories.some((sc) =>
+          gameCats.includes(sc.toLowerCase().trim())
+        );
+        if (!hasMatch) return false;
+      }
+
+      // Search query filter (title, notes, tags)
+      if (searchFilter.trim()) {
+        const q = searchFilter.toLowerCase().trim();
+        const matchTitle = g.title.toLowerCase().includes(q);
+        const matchNotes = (g.notes || '').toLowerCase().includes(q);
+        const matchTag = [
+          ...(g.customTags || []),
+          ...(g.igdbGenres || []),
+        ].some((t) => t.toLowerCase().includes(q));
+
+        if (!matchTitle && !matchNotes && !matchTag) return false;
+      }
+
+      return matchYear && matchStatus;
     });
-  }, [playedGames, selectedYear, statusFilter, searchFilter]);
+  }, [playedGames, selectedYear, statusFilter, historyTypeFilter, historyPodiumFilter, historySelectedCategories, searchFilter]);
+
+  const handleResetHistoryFilters = () => {
+    setSearchFilter('');
+    setHistoryTypeFilter('all');
+    setHistoryPodiumFilter('all');
+    setHistorySelectedCategories([]);
+  };
 
   // Statistics
   const stats = useMemo(() => {
@@ -120,6 +182,23 @@ export default function HomePage() {
       avgRating: avg,
     };
   }, [games, backlogGames]);
+
+  // Handle edit
+  const handleEditGame = (game: IGameEntry) => {
+    setGameToEdit(game);
+    setIsAddModalOpen(true);
+  };
+
+  const handleOpenAddModal = (status: 'completed' | 'backlog' = 'completed') => {
+    setGameToEdit(null);
+    setModalDefaultStatus(status);
+    setIsAddModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsAddModalOpen(false);
+    setGameToEdit(null);
+  };
 
   // Handle delete via custom modal
   const handleConfirmDelete = async () => {
@@ -140,8 +219,9 @@ export default function HomePage() {
     }
   };
 
-  // Handle status update (e.g. from backlog to playing/completed)
-  const handleToggleStatus = async (game: IGameEntry, newStatus: 'playing' | 'completed') => {
+  // Handle status update (from backlog to completed)
+  // Preserves backlogType, downloadUrl and notes so completed games inherit them!
+  const handleToggleStatus = async (game: IGameEntry, newStatus: 'completed') => {
     try {
       const activeYear = new Date().getFullYear();
       const res = await fetch(`/api/games/${game._id.toString()}`, {
@@ -150,17 +230,16 @@ export default function HomePage() {
         body: JSON.stringify({
           status: newStatus,
           yearPlayed: activeYear,
-          rating: newStatus === 'completed' ? 5 : undefined,
+          rating: game.rating || 5,
+          backlogType: game.backlogType || 'Hard',
+          downloadUrl: game.downloadUrl || '',
+          notes: game.notes || '',
         }),
       });
 
       if (res.ok) {
         await fetchGames();
-        if (newStatus === 'completed') {
-          toast.success(`¡"${game.title}" marcado como Terminado y trasladado al Historial ${activeYear}!`);
-        } else {
-          toast.info(`¡Comenzaste a jugar "${game.title}"!`);
-        }
+        toast.success(`¡"${game.title}" marcado como Terminado y trasladado al Historial ${activeYear}!`);
       }
     } catch (err) {
       console.error('Error updating game status:', err);
@@ -182,7 +261,7 @@ export default function HomePage() {
           releaseYear: rec.releaseYear,
           status: 'backlog',
           backlogType: 'Hard',
-          notes: 'Añadido desde recomendaciones explicables',
+          notes: 'Añadido desde recomendaciones personalizadas',
         }),
       });
 
@@ -203,11 +282,11 @@ export default function HomePage() {
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenAddModal={() => setIsAddModalOpen(true)}
+        onOpenAddModal={() => handleOpenAddModal(activeTab === 'backlog' ? 'backlog' : 'completed')}
         stats={stats}
       />
 
-      {/* Main Container - Extended width */}
+      {/* Main Container */}
       <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10 py-8">
         {/* Quick Stats Pill Cards */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -309,8 +388,8 @@ export default function HomePage() {
             <PodiumSection games={games} selectedYear={selectedYear} />
 
             {/* Search and Filters Bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-2 shrink-0">
                 <Layers className="w-5 h-5 text-[#00CAFA]" />
                 <h3 className="font-bold text-lg text-white">
                   Lista Detallada {selectedYear !== 'all' ? `(${selectedYear})` : '(Histórico Completo)'}
@@ -320,26 +399,29 @@ export default function HomePage() {
                 </span>
               </div>
 
-              {/* Search input */}
-              <div className="relative w-full sm:w-72">
-                <Search className="w-4 h-4 text-[#9D96B8] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Filtrar por título o género..."
-                  value={searchFilter}
-                  onChange={(e) => setSearchFilter(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 rounded-xl bg-[#1E1834] border border-[#352C56] text-white placeholder-[#787196] text-xs focus:outline-none focus:border-[#6967EB] transition-colors"
-                />
-              </div>
+              {/* Enhanced Filter Controls: Search Input, Chill/Hard Filter, Podium Filter, Category Multi-Select */}
+              <GameFilterControls
+                searchQuery={searchFilter}
+                onSearchChange={setSearchFilter}
+                typeFilter={historyTypeFilter}
+                onTypeChange={setHistoryTypeFilter}
+                podiumFilter={historyPodiumFilter}
+                onPodiumChange={setHistoryPodiumFilter}
+                categories={historyAvailableCategories}
+                selectedCategories={historySelectedCategories}
+                onCategoriesChange={setHistorySelectedCategories}
+                onResetFilters={handleResetHistoryFilters}
+              />
             </div>
 
-            {/* Games List Rows */}
+            {/* Games Grid Cards (No blur, crisp cards in responsive grid) */}
             {filteredHistoryGames.length > 0 ? (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                 {filteredHistoryGames.map((game) => (
                   <GameRow
                     key={game._id.toString()}
                     game={game}
+                    onEdit={handleEditGame}
                     onDelete={(id) => setGameToDelete({ id, title: game.title })}
                   />
                 ))}
@@ -349,8 +431,15 @@ export default function HomePage() {
                 <Gamepad2 className="w-10 h-10 text-[#9D96B8] mx-auto mb-3 opacity-50" />
                 <h4 className="text-base font-bold text-white">No se encontraron juegos</h4>
                 <p className="text-xs text-[#9D96B8] mt-1">
-                  Intenta cambiar el año o los filtros de búsqueda.
+                  Intenta cambiar el año o los filtros de búsqueda aplicados.
                 </p>
+                <button
+                  type="button"
+                  onClick={handleResetHistoryFilters}
+                  className="mt-4 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#6967EB] hover:bg-[#5856d6] transition-colors cursor-pointer"
+                >
+                  Restablecer filtros
+                </button>
               </div>
             )}
           </div>
@@ -371,16 +460,18 @@ export default function HomePage() {
               </div>
 
               <button
-                onClick={() => setIsAddModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#6967EB] hover:bg-[#5856d6] text-white font-bold text-xs tracking-wide shadow-sm cursor-pointer"
+                onClick={() => handleOpenAddModal('backlog')}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#6967EB] hover:bg-[#5856d6] text-white font-bold text-xs tracking-wide shadow-sm cursor-pointer transition-all"
               >
-                + Añadir a Pendientes
+                <Plus className="w-4 h-4 stroke-[3]" />
+                <span>Añadir a Pendientes</span>
               </button>
             </div>
 
             <BacklogView
               games={backlogGames}
               onToggleStatus={handleToggleStatus}
+              onEdit={handleEditGame}
               onDelete={(id) => {
                 const g = backlogGames.find((item) => item._id.toString() === id);
                 setGameToDelete({ id, title: g?.title || 'este juego' });
@@ -407,15 +498,21 @@ export default function HomePage() {
         )}
       </main>
 
-      {/* Add Game Modal */}
+      {/* Add / Edit Game Modal with key to force fresh state on edit/open */}
       <AddGameModal
+        key={gameToEdit ? gameToEdit._id.toString() : `new-${modalDefaultStatus}`}
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={handleCloseModal}
         onGameAdded={() => {
           fetchGames();
-          toast.success('Videojuego guardado correctamente en gamelog.gg');
+          toast.success(
+            gameToEdit
+              ? 'Videojuego actualizado con éxito'
+              : 'Videojuego guardado correctamente en gamelog.gg'
+          );
         }}
-        defaultStatus={activeTab === 'backlog' ? 'backlog' : 'completed'}
+        defaultStatus={modalDefaultStatus}
+        gameToEdit={gameToEdit}
       />
 
       {/* Radix UI Confirmation Modal */}
@@ -436,7 +533,11 @@ export default function HomePage() {
       <footer className="mt-16 border-t border-[#2E264E] bg-[#141124] py-6">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 text-center text-xs text-[#9D96B8]">
           <p>
-            <span className="text-[#00CAFA] font-bold">gamelog.gg</span> — Tu bitácora de videojuegos personal.
+            <span className="font-bold">
+              <span className="text-white">gamelog</span>
+              <span className="text-[#00CAFA]">.gg</span>
+            </span>
+            {' '}— Track like a tryhard
           </p>
         </div>
       </footer>

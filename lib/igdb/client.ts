@@ -57,12 +57,19 @@ function normalizeIGDBGame(g: IGDBGame): NormalizedGame {
     ? new Date(g.first_release_date * 1000).getFullYear()
     : undefined;
 
+  // Merge genres and themes seamlessly to provide rich categories
+  const rawCategories = [
+    ...(g.genres?.map((gen) => gen.name) || []),
+    ...(g.themes?.map((thm) => thm.name) || []),
+  ];
+  const uniqueCategories = Array.from(new Set(rawCategories.filter(Boolean)));
+
   return {
     igdbId: g.id,
     title: g.name,
     summary: g.summary || g.storyline || '',
     coverUrl,
-    genres: g.genres?.map((gen) => gen.name) || [],
+    genres: uniqueCategories,
     releaseYear,
     rating: g.rating ? Math.round(g.rating) : undefined,
   };
@@ -83,13 +90,13 @@ export async function searchGamesInIGDB(query: string): Promise<NormalizedGame[]
     if (trimmed) {
       apicalypseQuery = `
         search "${trimmed.replace(/"/g, '')}";
-        fields name, summary, storyline, first_release_date, cover.url, cover.image_id, genres.name, rating, similar_games;
+        fields name, summary, storyline, first_release_date, cover.url, cover.image_id, genres.name, themes.name, rating, similar_games;
         limit 15;
       `;
     } else {
       // Popular top rated games for discovery when query is empty
       apicalypseQuery = `
-        fields name, summary, storyline, first_release_date, cover.url, cover.image_id, genres.name, rating, similar_games;
+        fields name, summary, storyline, first_release_date, cover.url, cover.image_id, genres.name, themes.name, rating, similar_games;
         where rating >= 80 & rating_count > 50 & cover != null;
         sort rating desc;
         limit 12;
@@ -127,7 +134,7 @@ export async function getGameDetailsFromIGDB(igdbId: number): Promise<Normalized
 
   try {
     const apicalypseQuery = `
-      fields name, summary, storyline, first_release_date, cover.url, cover.image_id, genres.name, rating, similar_games.name, similar_games.cover.image_id;
+      fields name, summary, storyline, first_release_date, cover.url, cover.image_id, genres.name, themes.name, rating, similar_games.name, similar_games.cover.image_id;
       where id = ${igdbId};
       limit 1;
     `;

@@ -41,6 +41,82 @@
   }
 }
 
+/* ==========================================================================
+   Custom Gamers Dark Scrollbar Styling (Gamelog Theme)
+   ========================================================================== */
+
+/* Standard Firefox Support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3C335C transparent;
+}
+
+/* Chrome, Edge, Chromium & Safari - Main Window & Root */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: #141124;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #352C56;
+  border-radius: 9999px;
+  border: 2px solid #141124;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #6967EB;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Subtle, sleek scrollbars for inner containers (Modals, Dropdowns, Popovers) */
+.custom-scrollbar,
+div[class*="overflow-y-auto"],
+div[class*="overflow-x-auto"],
+div[class*="overflow-auto"] {
+  scrollbar-width: thin;
+  scrollbar-color: #3C335C transparent;
+}
+
+div[class*="overflow-y-auto"]::-webkit-scrollbar,
+div[class*="overflow-x-auto"]::-webkit-scrollbar,
+div[class*="overflow-auto"]::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+div[class*="overflow-y-auto"]::-webkit-scrollbar-track,
+div[class*="overflow-x-auto"]::-webkit-scrollbar-track,
+div[class*="overflow-auto"]::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+div[class*="overflow-y-auto"]::-webkit-scrollbar-thumb,
+div[class*="overflow-x-auto"]::-webkit-scrollbar-thumb,
+div[class*="overflow-auto"]::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #3C335C;
+  border-radius: 9999px;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+div[class*="overflow-y-auto"]::-webkit-scrollbar-thumb:hover,
+div[class*="overflow-x-auto"]::-webkit-scrollbar-thumb:hover,
+div[class*="overflow-auto"]::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #6967EB;
+}
+
 /* Subtle accent glows - non-intrusive */
 .accent-glow-primary {
   box-shadow: 0 4px 20px -2px rgba(105, 103, 235, 0.35);
@@ -58,22 +134,24 @@
   box-shadow: 0 0 18px 1px rgba(203, 213, 225, 0.25);
 }
 
-.accent-glow-bronze {
-  box-shadow: 0 0 18px 1px rgba(249, 115, 22, 0.25);
+/* Modern categories ticker / marquee for card tags (activates on card hover only) */
+@keyframes cardMarqueeTrack {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
-/* Custom Sleek Scrollbar */
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+.tags-marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  width: max-content;
+  will-change: transform;
 }
-::-webkit-scrollbar-track {
-  background: #141124;
-}
-::-webkit-scrollbar-thumb {
-  background: #2D254D;
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #6967EB;
+
+.group:hover .tags-marquee-animate {
+  animation: cardMarqueeTrack 14s linear infinite;
 }

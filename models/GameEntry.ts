@@ -16,7 +16,8 @@ export interface IGameEntry extends Document {
   rating?: number; // 1 to 5 stars
   podium?: PodiumRank;
   review?: string;
-  backlogType?: string; // e.g. "Hard", "Casual", etc.
+  backlogType?: string; // "Hard" | "Chill"
+  downloadUrl?: string; // Specific download/source URL
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -81,6 +82,10 @@ const GameEntrySchema = new Schema<IGameEntry>(
     },
     backlogType: {
       type: String,
+      default: 'Hard',
+    },
+    downloadUrl: {
+      type: String,
       default: '',
     },
     notes: {
@@ -98,7 +103,7 @@ GameEntrySchema.index({ userId: 1, status: 1 });
 GameEntrySchema.index({ userId: 1, yearPlayed: 1 });
 GameEntrySchema.index({ userId: 1, igdbId: 1 });
 
-// Ensure a user can only assign one podium rank (e.g., gold) per year played
+// Ensure a user can only assign one podium rank per year played
 GameEntrySchema.index(
   { userId: 1, yearPlayed: 1, podium: 1 },
   {

@@ -11,6 +11,7 @@ export interface SeedEntry {
   podium?: 'gold' | 'silver' | 'bronze' | null;
   review?: string;
   backlogType?: string;
+  downloadUrl?: string;
   notes?: string;
 }
 
@@ -140,6 +141,7 @@ export const NOTION_INITIAL_DATA: SeedEntry[] = [
     releaseYear: 2010,
     status: 'backlog',
     backlogType: 'Hard',
-    notes: 'https://www.blizzboygames.net',
+    downloadUrl: 'https://www.blizzboygames.net',
+    notes: 'Descarga con parches y traducción al español.',
   },
 ];

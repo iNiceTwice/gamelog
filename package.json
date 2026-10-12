@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.24",
+    "@radix-ui/react-select": "^2.3.8",
     "clsx": "^2.1.1",
     "lucide-react": "^1.52.0",
     "mongoose": "^9.11.1",
