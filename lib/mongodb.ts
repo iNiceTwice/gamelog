@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGO_URI || process.env.MONGO_URL;
+const rawUri =
+  process.env.STORAGE_MONGODB_URI ||
+  process.env.MONGODB_URI ||
+  process.env.MONGO_URI ||
+  process.env.MONGO_URL ||
+  '';
+
+const MONGODB_URI = rawUri.trim().replace(/^['"]|['"]$/g, '');
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -20,7 +27,9 @@ if (!cached) {
 
 export async function connectToDatabase(): Promise<typeof mongoose> {
   if (!MONGODB_URI) {
-    throw new Error('Please define the MONGO_URI or MONGO_URL environment variable');
+    throw new Error(
+      'Please define the STORAGE_MONGODB_URI, MONGODB_URI, MONGO_URI, or MONGO_URL environment variable'
+    );
   }
 
   if (cached!.conn) {
