@@ -1,6 +1,6 @@
 # gamelog.gg — Reglas Maestras para Agentes y Desarrolladores
 
-> **Identidad del Producto**: **gamelog.gg** — Tu biblioteca personal de videojuegos, podio de honor anual y backlog gamer organizado.
+> **Identidad del Producto**: **gamelog.gg** — Track like a tryhard
 
 ---
 

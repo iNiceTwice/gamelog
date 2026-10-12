@@ -3,8 +3,18 @@ import { Toaster } from 'sonner';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'gamelog.gg — Tu Biblioteca y Podio Gamer Personal',
-  description: 'Bitácora definitiva de videojuegos jugados, podio anual de honor y backlog organizado.',
+  title: 'gamelog.gg — Track like a tryhard',
+  description: 'Track like a tryhard — Tu biblioteca personal de videojuegos, podio anual de honor y backlog organizado.',
+  openGraph: {
+    title: 'gamelog.gg — Track like a tryhard',
+    description: 'Track like a tryhard — Tu biblioteca personal de videojuegos, podio anual de honor y backlog organizado.',
+    siteName: 'gamelog.gg',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'gamelog.gg — Track like a tryhard',
+    description: 'Track like a tryhard — Tu biblioteca personal de videojuegos, podio anual de honor y backlog organizado.',
+  },
 };
 
 export default function RootLayout({

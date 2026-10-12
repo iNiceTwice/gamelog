@@ -1,7 +1,7 @@
 {
   "name": "gamelog",
   "version": "1.0.0",
-  "description": "gamelog.gg - Tu biblioteca personal de videojuegos, podio anual y backlog gamer",
+  "description": "gamelog.gg — Track like a tryhard",
   "type": "module",
   "scripts": {
     "dev": "next dev",
