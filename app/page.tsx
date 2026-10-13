@@ -31,6 +31,33 @@ export default function HomePage() {
   const [games, setGames] = useState<IGameEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'history' | 'backlog' | 'recommendations'>('history');
+
+  // Sync activeTab with URL query parameter ?activeTab=... and handle back/forward navigation
+  useEffect(() => {
+    const syncTabFromUrl = () => {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const tabParam = params.get('activeTab');
+        if (tabParam === 'history' || tabParam === 'backlog' || tabParam === 'recommendations') {
+          setActiveTab(tabParam);
+        }
+      }
+    };
+
+    syncTabFromUrl();
+    window.addEventListener('popstate', syncTabFromUrl);
+    return () => window.removeEventListener('popstate', syncTabFromUrl);
+  }, []);
+
+  const handleTabChange = (tab: 'history' | 'backlog' | 'recommendations') => {
+    setActiveTab(tab);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('activeTab', tab);
+      window.history.pushState({}, '', url.toString());
+    }
+  };
+
   const [selectedYear, setSelectedYear] = useState<number | 'all'>(currentYear);
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'abandoned'>('all');
   
@@ -269,7 +296,7 @@ export default function HomePage() {
       if (res.ok) {
         await fetchGames();
         toast.success(`"${rec.title}" se agregó a tu Backlog`);
-        setActiveTab('backlog');
+        // Stay on recommendations page so user can keep exploring
       }
     } catch (err) {
       console.error('Error adding recommended game to backlog:', err);
@@ -286,140 +313,88 @@ export default function HomePage() {
       {/* Navbar */}
       <Navbar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
         onOpenAddModal={() => handleOpenAddModal(activeTab === 'backlog' ? 'backlog' : 'completed')}
         stats={stats}
       />
 
-      {/* Main Container */}
       <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10 py-8">
-        {/* Quick Stats Pill Cards */}
-        <section className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          <div className="p-4 rounded-2xl border border-[#352C56] bg-[#272041] flex items-center gap-3.5 shadow-sm">
-            <div className="p-2.5 rounded-xl bg-[#1E1834] text-[#00CAFA] border border-[#352C56]">
-              <CheckCircle2 className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-2xl font-black text-white">{stats.totalCompleted}</div>
-              <div className="text-xs text-[#9D96B8] font-medium">Juegos Terminados</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl border border-[#352C56] bg-[#272041] flex items-center gap-3.5 shadow-sm">
-            <div className="p-2.5 rounded-xl bg-[#1E1834] text-[#6967EB] border border-[#352C56]">
-              <Clock className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-2xl font-black text-white">{stats.backlogCount}</div>
-              <div className="text-xs text-[#9D96B8] font-medium">Pendientes (Backlog)</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl border border-[#352C56] bg-[#272041] flex items-center gap-3.5 shadow-sm">
-            <div className="p-2.5 rounded-xl bg-[#1E1834] text-[#FFBE0B] border border-[#352C56]">
-              <Star className="w-5 h-5 fill-[#FFBE0B]" />
-            </div>
-            <div>
-              <div className="text-2xl font-black text-white">
-                {stats.avgRating} <span className="text-xs text-[#FFBE0B] font-normal">/ 5</span>
-              </div>
-              <div className="text-xs text-[#9D96B8] font-medium">Calificación Media</div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl border border-[#352C56] bg-[#272041] flex items-center gap-3.5 shadow-sm">
-            <div className="p-2.5 rounded-xl bg-[#1E1834] text-[#00CAFA] border border-[#352C56]">
-              <Flame className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-2xl font-black text-white">
-                {selectedYear === 'all' ? 'Histórico' : selectedYear}
-              </div>
-              <div className="text-xs text-[#9D96B8] font-medium">Año en foco</div>
-            </div>
-          </div>
-        </section>
-
-        {/* TAB 1: HISTORY & PODIUM */}
+        {/* TAB 1: HISTORIAL */}
         {activeTab === 'history' && (
-          <div>
-            {/* Year Selector (Radix Select) and Status Filters */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pb-5 border-b border-[#2E264E]">
-              {/* Year Select Component */}
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <span className="text-xs font-mono text-[#9D96B8] uppercase tracking-wider flex items-center gap-1.5 shrink-0">
-                  <Calendar className="w-4 h-4 text-[#00CAFA]" /> Año:
+          <div className="space-y-10">
+            {/* Year selector & General Stats Bar */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#1E1834] p-4 rounded-2xl border border-[#2E264E] shadow-sm">
+              <div className="flex items-center gap-3">
+                <Calendar className="w-5 h-5 text-[#00CAFA]" />
+                <span className="text-sm font-bold text-white uppercase tracking-wider">
+                  Año de Juego:
                 </span>
-                <div className="w-56">
+                <div className="w-60">
                   <CustomSelect
                     value={selectedYear.toString()}
-                    onValueChange={(val) => setSelectedYear(val === 'all' ? 'all' : parseInt(val, 10))}
+                    onValueChange={(val: string) => setSelectedYear(val === 'all' ? 'all' : parseInt(val))}
                     options={yearOptions}
-                    placeholder="Selecciona el año..."
                   />
                 </div>
               </div>
 
-              {/* Status Filter buttons */}
-              <div className="flex items-center gap-1.5 bg-[#1E1834] p-1.5 rounded-2xl border border-[#2E264E] text-xs w-full sm:w-auto justify-center">
+              {/* Status filter: All / Completed / Abandoned */}
+              <div className="flex items-center gap-1.5 bg-[#141124] p-1 rounded-xl border border-[#2E264E]">
                 <button
                   onClick={() => setStatusFilter('all')}
-                  className={`px-3.5 py-2 rounded-xl font-semibold transition-colors cursor-pointer ${
-                    statusFilter === 'all' ? 'bg-[#272041] text-white shadow-sm border border-[#352C56]' : 'text-[#9D96B8] hover:text-white'
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    statusFilter === 'all'
+                      ? 'bg-[#272041] text-white shadow-sm'
+                      : 'text-[#9D96B8] hover:text-white'
                   }`}
                 >
-                  Todos
+                  Todos ({playedGames.length})
                 </button>
                 <button
                   onClick={() => setStatusFilter('completed')}
-                  className={`px-3.5 py-2 rounded-xl font-semibold transition-colors cursor-pointer ${
-                    statusFilter === 'completed' ? 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30' : 'text-[#9D96B8] hover:text-white'
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    statusFilter === 'completed'
+                      ? 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30'
+                      : 'text-[#9D96B8] hover:text-white'
                   }`}
                 >
-                  Terminados
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Terminados</span>
                 </button>
                 <button
                   onClick={() => setStatusFilter('abandoned')}
-                  className={`px-3.5 py-2 rounded-xl font-semibold transition-colors cursor-pointer ${
-                    statusFilter === 'abandoned' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'text-[#9D96B8] hover:text-white'
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    statusFilter === 'abandoned'
+                      ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                      : 'text-[#9D96B8] hover:text-white'
                   }`}
                 >
-                  Abandonados
+                  <span>Abandonados</span>
                 </button>
               </div>
             </div>
 
-            {/* Podium Section for the chosen year */}
-            <PodiumSection games={games} selectedYear={selectedYear} />
+            {/* Podium (Top 3 games of the selected year) */}
+            <PodiumSection
+              games={games}
+              selectedYear={selectedYear}
+            />
 
-            {/* Search and Filters Bar */}
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
-              <div className="flex items-center gap-2 shrink-0">
-                <Layers className="w-5 h-5 text-[#00CAFA]" />
-                <h3 className="font-bold text-lg text-white">
-                  Lista Detallada {selectedYear !== 'all' ? `(${selectedYear})` : '(Histórico Completo)'}
-                </h3>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#1E1834] text-[#9D96B8] border border-[#352C56]">
-                  {filteredHistoryGames.length} títulos
-                </span>
-              </div>
+            {/* Advanced Filters Bar for History */}
+            <GameFilterControls
+              searchQuery={searchFilter}
+              onSearchChange={setSearchFilter}
+              typeFilter={historyTypeFilter}
+              onTypeChange={setHistoryTypeFilter}
+              podiumFilter={historyPodiumFilter}
+              onPodiumChange={setHistoryPodiumFilter}
+              categories={historyAvailableCategories}
+              selectedCategories={historySelectedCategories}
+              onCategoriesChange={setHistorySelectedCategories}
+              onResetFilters={handleResetHistoryFilters}
+            />
 
-              {/* Enhanced Filter Controls: Search Input, Chill/Hard Filter, Podium Filter, Category Multi-Select */}
-              <GameFilterControls
-                searchQuery={searchFilter}
-                onSearchChange={setSearchFilter}
-                typeFilter={historyTypeFilter}
-                onTypeChange={setHistoryTypeFilter}
-                podiumFilter={historyPodiumFilter}
-                onPodiumChange={setHistoryPodiumFilter}
-                categories={historyAvailableCategories}
-                selectedCategories={historySelectedCategories}
-                onCategoriesChange={setHistorySelectedCategories}
-                onResetFilters={handleResetHistoryFilters}
-              />
-            </div>
-
-            {/* Games Grid Cards (No blur, crisp cards in responsive grid) */}
+            {/* Grid of played games (3 columns on desktop, responsive) */}
             {filteredHistoryGames.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                 {filteredHistoryGames.map((game) => (
@@ -468,7 +443,7 @@ export default function HomePage() {
                 onClick={() => handleOpenAddModal('backlog')}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#6967EB] hover:bg-[#5856d6] text-white font-bold text-xs tracking-wide shadow-sm cursor-pointer transition-all"
               >
-                <Plus className="w-4 h-4 stroke-[3]" />
+                <Plus className="w-4 h-4 stroke-[3] stroke-white" />
                 <span>Añadir a Pendientes</span>
               </button>
             </div>

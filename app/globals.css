@@ -172,3 +172,27 @@ div[class*="overflow-auto"]::-webkit-scrollbar-thumb:hover,
 .animate-loader-bar {
   animation: indeterminateLoader 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
+
+/* ==========================================================================
+   3D Flip Card Utilities (Horizontal & Vertical Flip)
+   ========================================================================== */
+.perspective-1000 {
+  perspective: 1200px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.rotate-x-180 {
+  transform: rotateX(180deg);
+}

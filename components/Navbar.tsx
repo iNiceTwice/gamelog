@@ -1,7 +1,5 @@
-'use client';
-
 import React from 'react';
-import { Gamepad2, Trophy, Clock, Sparkles, Plus, Star, CheckCircle2 } from 'lucide-react';
+import { Trophy, Clock, Sparkles, Plus } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: 'history' | 'backlog' | 'recommendations';
@@ -48,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <Trophy className="w-4 h-4 text-[#FFBE0B]" />
-            <span>Historial & Podio</span>
+            <span>Historial</span>
           </button>
 
           <button
@@ -77,32 +75,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <Sparkles className="w-4 h-4 text-[#00CAFA]" />
-            <span className="hidden sm:inline">Recomendaciones</span>
-            <span className="sm:hidden">Sugeridos</span>
+            <span>Recomendaciones</span>
           </button>
         </nav>
 
-        {/* Right side: Stats Pill + Add Game Button */}
+        {/* Right CTA - Add Game Button */}
         <div className="flex items-center gap-3">
-          <div className="hidden lg:flex items-center gap-3 bg-[#141124] px-3.5 py-1.5 rounded-2xl border border-[#2E264E] text-xs">
-            <div className="flex items-center gap-1.5 text-[#9D96B8]">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#00CAFA]" />
-              <span className="font-bold text-white">{stats.totalCompleted}</span> hechos
-            </div>
-            <div className="h-3 w-[1px] bg-[#2E264E]" />
-            <div className="flex items-center gap-1.5 text-[#9D96B8]">
-              <Star className="w-3.5 h-3.5 text-[#FFBE0B] fill-[#FFBE0B]" />
-              <span className="font-bold text-white">{stats.avgRating}</span>
-            </div>
-          </div>
-
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#6967EB] hover:bg-[#5856d6] text-white font-bold text-sm tracking-wide transition-all shadow-[0_4px_15px_rgba(105,103,235,0.35)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#6967EB] hover:bg-[#5856d6] text-white font-bold text-xs tracking-wide shadow-sm cursor-pointer transition-all"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
-            <span className="hidden md:inline">Agregar Juego</span>
-            <span className="md:hidden">Nuevo</span>
+            <span>Añadir Videojuego</span>
           </button>
         </div>
       </div>

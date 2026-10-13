@@ -1,3 +1,9 @@
+export interface IGDBGameVideo {
+  id: number;
+  name: string;
+  video_id: string; // YouTube video ID
+}
+
 export interface IGDBGame {
   id: number;
   name: string;
@@ -18,8 +24,15 @@ export interface IGDBGame {
     id: number;
     name: string;
   }>;
+  videos?: IGDBGameVideo[];
   similar_games?: number[];
   rating?: number;
+}
+
+export interface GameVideoInfo {
+  name: string;
+  youtubeId: string;
+  type: 'trailer' | 'gameplay' | 'other';
 }
 
 export interface NormalizedGame {
@@ -30,4 +43,6 @@ export interface NormalizedGame {
   genres: string[];
   releaseYear?: number;
   rating?: number;
+  videos?: GameVideoInfo[];
+  similarGames?: number[];
 }
