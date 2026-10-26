@@ -6,7 +6,7 @@ import {
   Trophy, 
   Flame, 
   Coffee, 
-  Compass, 
+  TrendingUp, 
   Loader2, 
   Gamepad2, 
   Layers, 
@@ -29,6 +29,8 @@ import { TGA_AVAILABLE_YEARS, TGA_GOTY_DATA } from '@/lib/data/tgaGoty';
 const ITEMS_PER_PAGE = 10;
 const SCRAPE_COOLDOWN_MS = 30 * 60 * 1000; // 30 minutes cooldown
 
+type FilterMode = 'all' | 'popular' | 'podium' | 'Hard' | 'Chill' | 'tga';
+
 interface RecommendationsViewProps {
   onAddGameToBacklog: (game: NormalizedGame, type: 'Hard' | 'Chill') => void;
 }
@@ -50,7 +52,7 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
   const [totalFound, setTotalFound] = useState(0);
 
   // Filter states
-  const [filterMode, setFilterMode] = useState<'all' | 'podium' | 'Hard' | 'Chill' | 'tga'>('all');
+  const [filterMode, setFilterMode] = useState<FilterMode>('all');
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
 
   // Default to the latest year that has data (e.g. 2025)
@@ -121,10 +123,10 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
 
   const fetchRecommendations = useCallback(
     async (
-      page = currentPage,
-      mode = filterMode,
-      genre = selectedGenre,
-      tgaYear = selectedTgaYear
+      page: number,
+      mode: FilterMode,
+      genre: string | null,
+      tgaYear: number
     ) => {
       try {
         setIsChangingPage(true);
@@ -136,7 +138,13 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
 
         if (mode === 'tga') {
           params.set('tgaYear', tgaYear.toString());
-        } else if (genre && mode !== 'podium' && mode !== 'Hard' && mode !== 'Chill') {
+        } else if (
+          genre &&
+          mode !== 'podium' &&
+          mode !== 'Hard' &&
+          mode !== 'Chill' &&
+          mode !== 'popular'
+        ) {
           params.set('mode', 'genre');
           params.set('genre', genre);
         }
@@ -161,41 +169,37 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
         setIsChangingPage(false);
       }
     },
-    [currentPage, filterMode, selectedGenre, selectedTgaYear]
+    []
   );
 
   useEffect(() => {
     fetchRecommendations(currentPage, filterMode, selectedGenre, selectedTgaYear);
-  }, [filterMode, selectedGenre, selectedTgaYear, currentPage, fetchRecommendations]);
+  }, [currentPage, filterMode, selectedGenre, selectedTgaYear, fetchRecommendations]);
 
   // Mode button click (resets to page 1)
-  const handleModeChange = (newMode: 'all' | 'podium' | 'Hard' | 'Chill' | 'tga') => {
+  const handleModeChange = (newMode: FilterMode) => {
+    setLoading(true);
     setFilterMode(newMode);
     setSelectedGenre(null);
     setCurrentPage(1);
-    setLoading(true);
-    fetchRecommendations(1, newMode, null, selectedTgaYear);
   };
 
   const handleTgaYearChange = (year: number) => {
-    setSelectedTgaYear(year);
     setLoading(true);
-    fetchRecommendations(1, 'tga', null, year);
+    setSelectedTgaYear(year);
+    setCurrentPage(1);
   };
 
   const handleSelectGenre = (genre: string) => {
+    setLoading(true);
     if (selectedGenre === genre) {
       setSelectedGenre(null);
       setFilterMode('all');
       setCurrentPage(1);
-      setLoading(true);
-      fetchRecommendations(1, 'all', null, selectedTgaYear);
     } else {
       setSelectedGenre(genre);
       setFilterMode('all');
       setCurrentPage(1);
-      setLoading(true);
-      fetchRecommendations(1, 'all', genre, selectedTgaYear);
     }
   };
 
@@ -206,7 +210,6 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
     if (containerRef.current) {
       containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-    fetchRecommendations(newPage, filterMode, selectedGenre, selectedTgaYear);
   };
 
   // Mark game as "Terminado" / Already played -> Saves to MongoDB table DismissedGame!
@@ -315,7 +318,7 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
                 Recomendaciones Inteligentes
               </h3>
               <p className="text-xs text-[#9D96B8] mt-1 max-w-2xl">
-                Calculadas en tiempo real cruzando tu Podio de Honor, calificaciones, géneros favoritos y los nominados al GOTY en The Game Awards. Gira la tarjeta verticalmente en 3D para previsualizar trailers o gameplays. El botón &quot;Terminado&quot; guarda en tu base de datos para no volver a sugerirlos.
+                Equilibrio entre actualidad, popularidad global y afinidad con tu biblioteca (Podio, calificaciones y Backlog). Explora lanzamientos recientes en tendencia o gira la tarjeta en 3D para ver trailers y gameplays.
               </p>
             </div>
 
@@ -353,8 +356,21 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
                       : 'text-[#9D96B8] hover:text-white'
                   }`}
                 >
-                  <Compass className="w-3.5 h-3.5 text-[#00CAFA]" />
-                  <span>Explorar Todo</span>
+                  <Sparkles className="w-3.5 h-3.5 text-[#00CAFA]" />
+                  <span>Para Ti</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleModeChange('popular')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    filterMode === 'popular'
+                      ? 'bg-gradient-to-r from-[#00CAFA]/20 to-[#6967EB]/25 text-[#00CAFA] border border-[#00CAFA]/50 shadow-sm'
+                      : 'text-[#9D96B8] hover:text-[#00CAFA]'
+                  }`}
+                >
+                  <TrendingUp className="w-3.5 h-3.5 text-[#00CAFA]" />
+                  <span>Popular</span>
                 </button>
 
                 <button
@@ -607,7 +623,9 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
           <p className="text-white font-bold text-sm tracking-wide">
             {filterMode === 'tga'
               ? `Obteniendo todos los nominados al GOTY ${selectedTgaYear} y trailers de IGDB...`
-              : 'Consultando afinidades y catálogo de IGDB...'}
+              : filterMode === 'popular'
+              ? 'Buscando lanzamientos nuevos y populares en tendencia...'
+              : 'Calculando afinidad, popularidad y actualidad en IGDB...'}
           </p>
           <p className="text-[#9D96B8] text-xs">
             Extrayendo portadas oficiales, trailers y gameplays...
@@ -654,17 +672,28 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
 
                 {/* Page Number Chips */}
                 <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
-                    let pNum = i + 1;
-                    if (totalPages > 5 && currentPage > 3) {
-                      pNum = currentPage - 2 + i;
-                      if (pNum > totalPages) pNum = totalPages - (4 - i);
-                    }
-                    if (pNum < 1) pNum = 1;
+                  {(() => {
+                    const maxButtons = 5;
+                    let start = 1;
+                    let end = totalPages;
 
-                    return (
+                    if (totalPages > maxButtons) {
+                      start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+                      end = start + maxButtons - 1;
+                      if (end > totalPages) {
+                        end = totalPages;
+                        start = Math.max(1, end - maxButtons + 1);
+                      }
+                    }
+
+                    const pageNumbers: number[] = [];
+                    for (let p = start; p <= end; p++) {
+                      pageNumbers.push(p);
+                    }
+
+                    return pageNumbers.map((pNum) => (
                       <button
-                        key={pNum}
+                        key={`page-btn-${pNum}`}
                         type="button"
                         disabled={isChangingPage}
                         onClick={() => handlePageChange(pNum)}
@@ -676,8 +705,8 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
                       >
                         {pNum}
                       </button>
-                    );
-                  })}
+                    ));
+                  })()}
                 </div>
 
                 <button
@@ -705,7 +734,7 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
           <p className="text-xs text-[#9D96B8] mt-1 max-w-sm mx-auto">
             {filterMode === 'tga'
               ? 'Puedes presionar el botón "Buscar nominados" arriba para consultar si ya fueron anunciados.'
-              : 'Prueba cambiando a "Explorar Todo" o navega a la página 1 para ver otros títulos.'}
+              : 'Prueba cambiando a "Para Ti" o navega a la página 1 para ver otros títulos.'}
           </p>
           {filterMode === 'tga' ? (
             <button
@@ -729,7 +758,7 @@ export const RecommendationsView: React.FC<RecommendationsViewProps> = ({
               onClick={() => handleModeChange('all')}
               className="mt-4 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#6967EB] hover:bg-[#5856d6] transition-colors cursor-pointer"
             >
-              Volver a Explorar Todo
+              Volver a Para Ti
             </button>
           )}
         </div>

@@ -27,6 +27,10 @@ export interface IGDBGame {
   videos?: IGDBGameVideo[];
   similar_games?: number[];
   rating?: number;
+  rating_count?: number;
+  total_rating?: number;
+  total_rating_count?: number;
+  hypes?: number;
 }
 
 export interface GameVideoInfo {
@@ -43,6 +47,10 @@ export interface NormalizedGame {
   genres: string[];
   releaseYear?: number;
   rating?: number;
+  ratingCount?: number;
+  totalRating?: number;
+  totalRatingCount?: number;
+  hypes?: number;
   videos?: GameVideoInfo[];
   similarGames?: number[];
 }
